@@ -2,6 +2,8 @@
 
 **Control your smart home**
 
+![Screenshot](https://raw.githubusercontent.com/cassidyjames/butler/main/data/screenshots/light.png)
+
 Hybrid native + web app for Home Assistant. Butler wraps your Home Assistant dashboard up in a native UI, integrating better with your OS. Native features include:
 
 - Icon in your App Grid, Applications Menu, Dash, Dock, etc.

@@ -1,0 +1,26 @@
+{
+    "app-id" : "com.cassidyjames.butler",
+    "runtime" : "org.gnome.Platform",
+    "runtime-version" : "45",
+    "sdk" : "org.gnome.Sdk",
+    "command" : "com.cassidyjames.butler",
+    "finish-args" : [
+        "--socket=wayland",
+        "--socket=fallback-x11",
+        "--share=ipc",
+        "--share=network",
+        "--device=dri"
+    ],
+    "modules" : [
+        {
+            "name" : "butler",
+            "buildsystem" : "meson",
+            "sources" : [
+                {
+                    "type" : "dir",
+                    "path" : "."
+                }
+            ]
+        }
+    ]
+}

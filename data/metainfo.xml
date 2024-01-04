@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2024 Cassidy James Blaede <c@ssidyjam.es> -->
+<component type="desktop">
+  <id>com.cassidyjames.butler</id>
+  <name>Butler for Home Assistant</name>
+  <summary>Control your smart home</summary>
+  <metadata_license>CC-BY-SA-4.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <description>
+    <p>Hybrid native + web app for Home Assistant. Butler wraps your Home Assistant dashboard up in a native UI, integrating better with your OS. Native features include:</p>
+    <ul>
+      <li>Icon in your App Grid, Applications Menu, Dash, Dock, etc.</li>
+      <li>Native header bar</li>
+      <li>Save and restore current view and size when closed and re-opened</li>
+      <li>Two-finger swipe and mouse button support to go back/forward between views</li>
+      <li>Cross-desktop light/dark style support for GNOME, elementary OS, etc.</li>
+    </ul>
+    <p>Other features include:</p>
+    <ul>
+      <li>Pinch-to-zoom</li>
+      <li>Set the scaling with Ctrl+Plus/Minus or Ctrl+0 to reset</li>
+    </ul>
+  </description>
+  <provides>
+    <binary>com.cassidyjames.butler</binary>
+  </provides>
+  <launchable type="desktop-id">com.cassidyjames.butler.desktop</launchable>
+  <recommends>
+    <display_length compare="ge">360</display_length>
+  </recommends>
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>touch</control>
+  </supports>
+  <releases>
+    <release version="1.0.0" date="2024-01-03">
+      <description>
+        <p>Initial release</p>
+      </description>
+    </release>
+  </releases>
+  <content_rating type="oars-1.1">
+    <content_attribute id="social-info">mild</content_attribute>
+  </content_rating>
+  <developer_name>Cassidy James Blaede</developer_name>
+  <url type="homepage">https://cassidyjames.com</url>
+  <url type="bugtracker">https://github.com/cassidyjames/butler/issues</url>
+  <url type="donation">https://cassidyjames.com/pay</url>
+  <url type="help">https://cassidyjames.com/support</url>
+</component>

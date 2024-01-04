@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema path="/com/cassidyjames/butler/" id="com.cassidyjames.butler">
+    <key name="current-url" type="s">
+      <default>""</default>
+      <summary>Current URL</summary>
+      <description>The last-viewed URL for restoring state</description>
+    </key>
+    <key name="server" type="s">
+      <default>"https://demo.home-assistant.io/"</default>
+      <summary>Home Assistant server URL</summary>
+      <description>URL for the Home Assistant server; must include protocol and custom ports</description>
+    </key>
+    <key name="window-maximized" type="b">
+      <default>false</default>
+      <summary>Window maximized</summary>
+      <description>Whether the window was maximized on last run</description>
+    </key>
+    <key name="window-size" type="(ii)">
+      <default>(1000, 700)</default>
+      <summary>Window size</summary>
+      <description>Most recent window size (width, height)</description>
+    </key>
+    <key name="zoom" type="d">
+      <default>1.0</default>
+      <summary>Zoom level</summary>
+      <description>The last-used zoom level</description>
+    </key>
+  </schema>
+</schemalist>

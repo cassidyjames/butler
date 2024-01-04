@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/com/cassidyjames/butler">
+    <file>style.css</file>
+  </gresource>
+  <gresource prefix="/com/cassidyjames/butler/icons/scalable/actions/">
+    <file alias="app.svg">icons/app.svg</file>
+  </gresource>
+</gresources>

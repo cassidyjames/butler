@@ -1,4 +1,5 @@
 *~
 build/
 .flatpak-builder/
+repo/
 unsaved file*

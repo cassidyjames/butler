@@ -80,7 +80,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             reveal_child = !fullscreened
         };
 
-        fullscreen_toast = new Adw.Toast ("Press <b>Ctrl F</b> or <b>F11</b> to toggle fullscreen") {
+        fullscreen_toast = new Adw.Toast (_("Press <b>Ctrl F</b> or <b>F11</b> to toggle fullscreen")) {
             action_name = "win.toggle_fullscreen",
             button_label = _("Exit _Fullscreen")
         };
@@ -240,14 +240,14 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         var server_dialog = new Adw.MessageDialog (
             this,
-            "Set Server URL",
-            "Enter the full URL including protocol (e.g. <tt>http://</tt>) and any custom port (e.g. <tt>:8123</tt>)"
+            _("Set Server URL"),
+            _("Enter the full URL including any custom port")
         ) {
             body_use_markup = true,
             default_response = "save",
             extra_child = server_entry,
         };
-        server_dialog.add_response ("close", "_Cancel");
+        server_dialog.add_response ("close", _("_Cancel"));
 
         server_dialog.add_response ("demo", _("_Reset to Demo"));
         server_dialog.set_response_appearance ("demo", Adw.ResponseAppearance.DESTRUCTIVE);
@@ -263,6 +263,10 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
                 if (new_server == "") {
                     new_server = default_server;
+                }
+
+                if (!new_server.contains ("://")) {
+                    new_server = "http://" + new_server;
                 }
 
                 if (new_server != current_server) {
@@ -282,13 +286,13 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         var log_out_dialog = new Adw.MessageDialog (
             this,
-            "Log out of Home Assistant?",
-            "You will need to re-enter your username and password for <b>%s</b> to log back in.".printf (server)
+            _("Log out of Home Assistant?"),
+            _("You will need to re-enter your username and password for <b>%s</b> to log back in.").printf (server)
         ) {
             body_use_markup = true,
             default_response = "log_out"
         };
-        log_out_dialog.add_response ("close", "_Stay Logged In");
+        log_out_dialog.add_response ("close", _("_Stay Logged In"));
         log_out_dialog.add_response ("log_out", _("_Log Out"));
         log_out_dialog.set_response_appearance ("log_out", Adw.ResponseAppearance.DESTRUCTIVE);
 

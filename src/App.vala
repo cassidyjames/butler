@@ -60,4 +60,3 @@ public class Butler.App : Adw.Application {
         return app.run (args);
     }
 }
-

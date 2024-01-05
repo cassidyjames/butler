@@ -57,8 +57,16 @@
   <releases>
     <release version="1.0.2" date="2024-01-05">
       <description>
-        <p>Improved About window</p>
+        <p>Small improvements</p>
+        <ul>
+          <li>Improved about window</li>
+          <li>Automatically prepend http:// to custom server if omitted</li>
+          <li>Start preparing for translations</li>
+        </ul>
       </description>
+      <issues>
+        <issue url="https://github.com/cassidyjames/butler/issues/13">Automatically prepend http:// to custom server if omitted</issue>
+      </issues>
     </release>
     <release version="1.0.1" date="2024-01-05">
       <description>

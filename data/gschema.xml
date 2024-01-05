@@ -11,6 +11,11 @@
       <summary>Home Assistant server URL</summary>
       <description>URL for the Home Assistant server; must include protocol and custom ports</description>
     </key>
+    <key name="window-fullscreened" type="b">
+      <default>false</default>
+      <summary>Window fullscreened</summary>
+      <description>Whether the window was fullscreened on last run</description>
+    </key>
     <key name="window-maximized" type="b">
       <default>false</default>
       <summary>Window maximized</summary>

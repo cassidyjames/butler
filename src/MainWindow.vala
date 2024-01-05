@@ -4,6 +4,10 @@
  */
 
 public class Butler.MainWindow : Adw.ApplicationWindow {
+    public Adw.Toast fullscreen_toast;
+    public Adw.ToastOverlay toast_overlay;
+    public Gtk.Revealer header_revealer;
+
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
         { "toggle_fullscreen", toggle_fullscreen },
         { "set_server", on_set_server_activate },
@@ -26,12 +30,15 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     }
 
     construct {
+        maximized = App.settings.get_boolean ("window-maximized");
+        fullscreened = App.settings.get_boolean ("window-fullscreened");
+
         var site_menu = new Menu ();
         site_menu.append (_("_Log Out…"), "win.log_out");
 
         var app_menu = new Menu ();
         // TODO: How do I add shortcuts to the menu?
-        app_menu.append (_("Toggle _Fullscreen"), "win.toggle_fullscreen");
+        app_menu.append (_("_Fullscreen"), "win.toggle_fullscreen");
         app_menu.append (_("Change _Server…"), "win.set_server");
         app_menu.append (_("_About %s").printf (App.NAME), "win.about");
 
@@ -47,6 +54,16 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         var header = new Adw.HeaderBar ();
         header.pack_end (menu_button);
+
+        header_revealer = new Gtk.Revealer () {
+            child = header,
+            reveal_child = !fullscreened
+        };
+
+        fullscreen_toast = new Adw.Toast ("Press <b>Ctrl F</b> or <b>F11</b> to toggle fullscreen") {
+            action_name = "win.toggle_fullscreen",
+            button_label = _("Exit _Fullscreen")
+        };
 
         web_view = new Butler.WebView ();
 
@@ -73,11 +90,15 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         stack.add_named (status_page, "loading");
         stack.add_named (web_view, "web");
 
+        toast_overlay = new Adw.ToastOverlay () {
+            child = stack
+        };
+
         var grid = new Gtk.Grid () {
             orientation = Gtk.Orientation.VERTICAL
         };
-        grid.attach (header, 0, 0);
-        grid.attach (stack, 0, 1);
+        grid.attach (header_revealer, 0, 0);
+        grid.attach (toast_overlay, 0, 1);
 
         set_content (grid);
 
@@ -86,14 +107,11 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         set_default_size (window_width, window_height);
 
-        if (App.settings.get_boolean ("window-maximized")) {
-            maximize ();
-        }
-
         close_request.connect (() => {
             save_window_state ();
             return Gdk.EVENT_PROPAGATE;
         });
+        notify["fullscreened"].connect (save_window_state);
         notify["maximized"].connect (save_window_state);
 
         web_view.load_changed.connect ((load_event) => {
@@ -111,9 +129,12 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     }
 
     private void save_window_state () {
-        if (maximized) {
+        if (fullscreened) {
+            App.settings.set_boolean ("window-fullscreened", true);
+        } else if (maximized) {
             App.settings.set_boolean ("window-maximized", true);
         } else {
+            App.settings.set_boolean ("window-fullscreened", false);
             App.settings.set_boolean ("window-maximized", false);
             App.settings.set (
                 "window-size", "(ii)",
@@ -178,8 +199,12 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     public void toggle_fullscreen () {
         if (fullscreened) {
             unfullscreen ();
+            header_revealer.set_reveal_child (true);
+            fullscreen_toast.dismiss ();
         } else {
             fullscreen ();
+            header_revealer.set_reveal_child (false);
+            toast_overlay.add_toast (fullscreen_toast);
         }
     }
 
@@ -202,12 +227,12 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             default_response = "save",
             extra_child = server_entry,
         };
-        server_dialog.add_response ("close", "Cancel");
+        server_dialog.add_response ("close", "_Cancel");
 
-        server_dialog.add_response ("demo", _("Reset to Demo"));
+        server_dialog.add_response ("demo", _("_Reset to Demo"));
         server_dialog.set_response_appearance ("demo", Adw.ResponseAppearance.DESTRUCTIVE);
 
-        server_dialog.add_response ("save", _("Set Server"));
+        server_dialog.add_response ("save", _("_Set Server"));
         server_dialog.set_response_appearance ("save", Adw.ResponseAppearance.SUGGESTED);
 
         server_dialog.present ();
@@ -243,8 +268,8 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             body_use_markup = true,
             default_response = "log_out"
         };
-        log_out_dialog.add_response ("close", "Stay Logged In");
-        log_out_dialog.add_response ("log_out", _("Log Out"));
+        log_out_dialog.add_response ("close", "_Stay Logged In");
+        log_out_dialog.add_response ("log_out", _("_Log Out"));
         log_out_dialog.set_response_appearance ("log_out", Adw.ResponseAppearance.DESTRUCTIVE);
 
         log_out_dialog.present ();

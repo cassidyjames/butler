@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/com/cassidyjames/butler">
+  <gresource prefix="/com/cassidyjames/butler/">
+    <file preprocess="xml-stripblanks">metainfo.xml</file>
     <file>style.css</file>
   </gresource>
   <gresource prefix="/com/cassidyjames/butler/icons/scalable/actions/">

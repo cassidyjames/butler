@@ -4,6 +4,7 @@
  */
 
 public class Butler.MainWindow : Adw.ApplicationWindow {
+    public Adw.AboutWindow about_window;
     public Adw.Toast fullscreen_toast;
     public Adw.ToastOverlay toast_overlay;
     public Gtk.Revealer header_revealer;
@@ -21,9 +22,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         Object (
             application: application,
             height_request: 180,
-            icon_name: APP_ID,
             resizable: true,
-            title: App.NAME,
             width_request: 300
         );
         add_action_entries (ACTION_ENTRIES, this);
@@ -33,6 +32,27 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         maximized = App.settings.get_boolean ("window-maximized");
         fullscreened = App.settings.get_boolean ("window-fullscreened");
 
+        about_window = new Adw.AboutWindow.from_appdata (
+            "/com/cassidyjames/butler/metainfo.xml", VERSION
+        ) {
+            transient_for = this,
+            hide_on_close = true,
+
+            /// The translator credits. Please translate this with your name(s).
+            translator_credits = _("translator-credits"),
+        };
+        about_window.copyright = "© 2020–%i %s".printf (
+            new DateTime.now_local ().get_year (),
+            about_window.developer_name
+        );
+        about_window.add_link (_("About Home Assistant"), "https://www.home-assistant.io/");
+        about_window.add_link (_("Home Assistant Privacy Policy"), "https://www.home-assistant.io/privacy/");
+
+        // Set MainWindow properties from the AppData already fetched and parsed
+        // by the AboutWindow construction
+        icon_name = about_window.application_icon;
+        title = about_window.application_name;
+
         var site_menu = new Menu ();
         site_menu.append (_("_Log Out…"), "win.log_out");
 
@@ -40,7 +60,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         // TODO: How do I add shortcuts to the menu?
         app_menu.append (_("_Fullscreen"), "win.toggle_fullscreen");
         app_menu.append (_("Change _Server…"), "win.set_server");
-        app_menu.append (_("_About %s").printf (App.NAME), "win.about");
+        app_menu.append (_("_About %s").printf (title), "win.about");
 
         var menu = new Menu ();
         menu.append_section (null, site_menu);
@@ -76,7 +96,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         }
 
         var status_page = new Adw.StatusPage () {
-            title = _("%s for Home Assistant").printf (App.NAME),
+            title = title,
             description = _("Loading the dashboard…"),
             icon_name = APP_ID
         };
@@ -282,33 +302,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     }
 
     private void on_about_activate () {
-        var about_window = new Adw.AboutWindow () {
-            transient_for = this,
-
-            application_icon = APP_ID,
-            application_name = _("%s for Home Assistant").printf (App.NAME),
-            developer_name = App.DEVELOPER,
-            version = VERSION,
-
-            comments = _("Butler is a hybrid native + web app for your Home Assistant dashboard"),
-
-            website = App.URL,
-            issue_url = "https://github.com/cassidyjames/butler/issues",
-
-            // Credits
-            developers = { "%s <%s>".printf (App.DEVELOPER, App.EMAIL) },
-            designers = { "%s %s".printf (App.DEVELOPER, App.URL) },
-
-            /// The translator credits. Please translate this with your name(s).
-            translator_credits = _("translator-credits"),
-
-            // Legal
-            copyright = "Copyright © 2020–2024 %s".printf (App.DEVELOPER),
-            license_type = Gtk.License.GPL_3_0,
-        };
-        about_window.add_link (_("About Home Assistant"), "https://www.home-assistant.io/");
-        about_window.add_link (_("Home Assistant Privacy Policy"), "https://www.home-assistant.io/privacy/");
-
         about_window.present ();
     }
 }
+

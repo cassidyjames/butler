@@ -1,7 +1,8 @@
 project(
   'com.cassidyjames.butler',
   'vala', 'c',
-  version: '1.0.1'
+  version: '1.0.2',
+  meson_version: '>=0.58',
 )
 
 gnome = import('gnome')
@@ -35,7 +36,7 @@ executable(
   dependencies: [
     dependency('glib-2.0'),
     dependency('gtk4'),
-    dependency('libadwaita-1'),
+    dependency('libadwaita-1', version: '>=1.4.2'),
     dependency('webkitgtk-6.0'),
     meson.get_compiler('vala').find_library('posix'),
   ],
@@ -43,5 +44,3 @@ executable(
 )
 
 subdir('data')
-
-meson.add_install_script('build-aux' / 'meson'/ 'post_install.py')

@@ -55,6 +55,11 @@
   </screenshots>
 
   <releases>
+    <release version="1.0.2" date="2024-01-05">
+      <description>
+        <p>Improved About window</p>
+      </description>
+    </release>
     <release version="1.0.1" date="2024-01-05">
       <description>
         <p>Improved accessibility and fullscreen experience</p>

@@ -4,17 +4,10 @@
  */
 
 public class Butler.App : Adw.Application {
-    public const string NAME = "Butler";
-    public const string DEVELOPER = "Cassidy James Blaede";
-    public const string EMAIL = "c@ssidyjam.es";
-    public const string URL = "https://cassidyjames.com";
-
     public static GLib.Settings settings;
 
     public App () {
-        Object (
-            application_id: APP_ID
-        );
+        Object ( application_id: APP_ID );
     }
 
     public static App _instance = null;
@@ -67,3 +60,4 @@ public class Butler.App : Adw.Application {
         return app.run (args);
     }
 }
+

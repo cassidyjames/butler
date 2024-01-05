@@ -1,0 +1,24 @@
+name: Flatpak
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flatpak:
+    runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:gnome-45
+      options: --privileged
+    steps:
+    - uses: actions/checkout@v4
+    - uses: flatpak/flatpak-github-actions/flatpak-builder@v6.2
+      with:
+        bundle: butler.flatpak
+        manifest-path: com.cassidyjames.butler.json
+        cache-key: "flatpak-builder-${{ github.sha }}"

@@ -30,6 +30,21 @@ public class Butler.WebView : WebKit.WebView {
             hardware_acceleration_policy = WebKit.HardwareAccelerationPolicy.ALWAYS
         };
 
+        var custom_css = new WebKit.UserStyleSheet (
+            """
+            header,
+            .header {
+              app-region: drag;
+              -webkit-app-region: drag;
+            }
+            """,
+            WebKit.UserContentInjectedFrames.TOP_FRAME,
+            WebKit.UserStyleLevel.AUTHOR,
+            null,
+            null
+        );
+        user_content_manager.add_style_sheet (custom_css);
+
         settings = webkit_settings;
         web_context = new WebKit.WebContext ();
 

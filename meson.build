@@ -12,7 +12,8 @@ add_global_arguments('-DGETTEXT_PACKAGE="@0@"'.format(meson.project_name()), lan
 asresources = gnome.compile_resources(
   'as-resources',
   'data' / 'gresource.xml',
-  source_dir: 'data'
+  source_dir: 'data',
+  c_name: 'as',
 )
 
 config_data = configuration_data()
@@ -44,3 +45,5 @@ executable(
 )
 
 subdir('data')
+
+meson.add_install_script('build-aux' / 'meson'/ 'post_install.py')

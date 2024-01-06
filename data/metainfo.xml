@@ -60,17 +60,17 @@
       <description>
         <p>Small improvements</p>
         <ul>
-          <li>Improved about window</li>
           <li>Show a banner about the demo server</li>
           <li>Open links in default browser</li>
-          <li>Automatically prepend http:// to custom server if omitted</li>
+          <li>Automatically prepend protocol to custom server if omitted</li>
+          <li>Improved about window</li>
           <li>Start preparing for translations</li>
         </ul>
       </description>
       <issues>
         <issue url="https://github.com/cassidyjames/butler/issues/4">Better onboarding</issue>
         <issue url="https://github.com/cassidyjames/butler/issues/8">Open links in default browser</issue>
-        <issue url="https://github.com/cassidyjames/butler/issues/13">Automatically prepend http:// to custom server if omitted</issue>
+        <issue url="https://github.com/cassidyjames/butler/issues/13">Automatically prepend protocol to custom server if omitted</issue>
       </issues>
     </release>
     <release version="1.0.1" date="2024-01-05">

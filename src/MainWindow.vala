@@ -4,9 +4,12 @@
  */
 
 public class Butler.MainWindow : Adw.ApplicationWindow {
+    public Adw.AboutWindow about_window;
+    public Adw.Banner demo_banner;
     public Adw.Toast fullscreen_toast;
     public Adw.ToastOverlay toast_overlay;
     public Gtk.Revealer header_revealer;
+    public Gtk.Revealer home_revealer;
 
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
         { "toggle_fullscreen", toggle_fullscreen },
@@ -21,9 +24,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         Object (
             application: application,
             height_request: 180,
-            icon_name: APP_ID,
             resizable: true,
-            title: App.NAME,
             width_request: 300
         );
         add_action_entries (ACTION_ENTRIES, this);
@@ -33,6 +34,37 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         maximized = App.settings.get_boolean ("window-maximized");
         fullscreened = App.settings.get_boolean ("window-fullscreened");
 
+        about_window = new Adw.AboutWindow.from_appdata (
+            "/com/cassidyjames/butler/metainfo.xml", VERSION
+        ) {
+            transient_for = this,
+            hide_on_close = true,
+            comments = _("Companion app to access your Home Assistant dashboard"),
+
+            /// The translator credits. Please translate this with your name(s).
+            translator_credits = _("translator-credits"),
+        };
+        about_window.copyright = "© 2020–%i %s".printf (
+            new DateTime.now_local ().get_year (),
+            about_window.developer_name
+        );
+        about_window.add_link (_("About Home Assistant"), "https://www.home-assistant.io/");
+        about_window.add_link (_("Home Assistant Privacy Policy"), "https://www.home-assistant.io/privacy/");
+
+        // Set MainWindow properties from the AppData already fetched and parsed
+        // by the AboutWindow construction
+        icon_name = about_window.application_icon;
+        title = about_window.application_name;
+
+        var home_button = new Gtk.Button.from_icon_name ("go-home-symbolic") {
+            tooltip_text = _("Go Home")
+        };
+
+        home_revealer = new Gtk.Revealer () {
+            child = home_button,
+            transition_type = Gtk.RevealerTransitionType.SLIDE_RIGHT
+        };
+
         var site_menu = new Menu ();
         site_menu.append (_("_Log Out…"), "win.log_out");
 
@@ -40,7 +72,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         // TODO: How do I add shortcuts to the menu?
         app_menu.append (_("_Fullscreen"), "win.toggle_fullscreen");
         app_menu.append (_("Change _Server…"), "win.set_server");
-        app_menu.append (_("_About %s").printf (App.NAME), "win.about");
+        app_menu.append (_("_About %s").printf (title), "win.about");
 
         var menu = new Menu ();
         menu.append_section (null, site_menu);
@@ -53,6 +85,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         };
 
         var header = new Adw.HeaderBar ();
+        header.pack_start (home_revealer);
         header.pack_end (menu_button);
 
         header_revealer = new Gtk.Revealer () {
@@ -60,7 +93,12 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             reveal_child = !fullscreened
         };
 
-        fullscreen_toast = new Adw.Toast ("Press <b>Ctrl F</b> or <b>F11</b> to toggle fullscreen") {
+        demo_banner = new Adw.Banner (_("Browsing Home Assistant Demo")) {
+            action_name = "win.set_server",
+            button_label = _("Set _Server…")
+        };
+
+        fullscreen_toast = new Adw.Toast (_("Press <b>Ctrl F</b> or <b>F11</b> to toggle fullscreen")) {
             action_name = "win.toggle_fullscreen",
             button_label = _("Exit _Fullscreen")
         };
@@ -76,7 +114,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         }
 
         var status_page = new Adw.StatusPage () {
-            title = _("%s for Home Assistant").printf (App.NAME),
+            title = title,
             description = _("Loading the dashboard…"),
             icon_name = APP_ID
         };
@@ -99,6 +137,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         };
         grid.attach (header_revealer, 0, 0);
         grid.attach (toast_overlay, 0, 1);
+        grid.attach (demo_banner, 0, 2);
 
         set_content (grid);
 
@@ -106,6 +145,10 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         App.settings.get ("window-size", "(ii)", out window_width, out window_height);
 
         set_default_size (window_width, window_height);
+
+        home_button.clicked.connect (() => {
+            web_view.load_uri (server);
+        });
 
         close_request.connect (() => {
             save_window_state ();
@@ -148,7 +191,20 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         if (web_view.is_loading) {
             // TODO: Add a loading progress bar or spinner somewhere?
         } else {
-            App.settings.set_string ("current-url", web_view.uri);
+            string default_server = App.settings.get_default_value ("server").get_string ();
+            string server = App.settings.get_string ("server");
+            string current_url = web_view.uri;
+
+            App.settings.set_string ("current-url", current_url);
+
+            if (current_url.has_prefix (default_server)) {
+                demo_banner.revealed = true;
+            } else if (current_url.has_prefix (server)) {
+                demo_banner.revealed = false;
+            } else {
+                demo_banner.revealed = false;
+                home_revealer.set_reveal_child (true);
+            }
         }
     }
 
@@ -220,14 +276,14 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         var server_dialog = new Adw.MessageDialog (
             this,
-            "Set Server URL",
-            "Enter the full URL including protocol (e.g. <tt>http://</tt>) and any custom port (e.g. <tt>:8123</tt>)"
+            _("Set Server URL"),
+            _("Enter the full URL including any custom port")
         ) {
             body_use_markup = true,
             default_response = "save",
             extra_child = server_entry,
         };
-        server_dialog.add_response ("close", "_Cancel");
+        server_dialog.add_response ("close", _("_Cancel"));
 
         server_dialog.add_response ("demo", _("_Reset to Demo"));
         server_dialog.set_response_appearance ("demo", Adw.ResponseAppearance.DESTRUCTIVE);
@@ -243,6 +299,10 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
                 if (new_server == "") {
                     new_server = default_server;
+                }
+
+                if (!new_server.contains ("://")) {
+                    new_server = "http://" + new_server;
                 }
 
                 if (new_server != current_server) {
@@ -262,13 +322,13 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         var log_out_dialog = new Adw.MessageDialog (
             this,
-            "Log out of Home Assistant?",
-            "You will need to re-enter your username and password for <b>%s</b> to log back in.".printf (server)
+            _("Log out of Home Assistant?"),
+            _("You will need to re-enter your username and password for <b>%s</b> to log back in.").printf (server)
         ) {
             body_use_markup = true,
             default_response = "log_out"
         };
-        log_out_dialog.add_response ("close", "_Stay Logged In");
+        log_out_dialog.add_response ("close", _("_Stay Logged In"));
         log_out_dialog.add_response ("log_out", _("_Log Out"));
         log_out_dialog.set_response_appearance ("log_out", Adw.ResponseAppearance.DESTRUCTIVE);
 
@@ -282,33 +342,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     }
 
     private void on_about_activate () {
-        var about_window = new Adw.AboutWindow () {
-            transient_for = this,
-
-            application_icon = APP_ID,
-            application_name = _("%s for Home Assistant").printf (App.NAME),
-            developer_name = App.DEVELOPER,
-            version = VERSION,
-
-            comments = _("Butler is a hybrid native + web app for your Home Assistant dashboard"),
-
-            website = App.URL,
-            issue_url = "https://github.com/cassidyjames/butler/issues",
-
-            // Credits
-            developers = { "%s <%s>".printf (App.DEVELOPER, App.EMAIL) },
-            designers = { "%s %s".printf (App.DEVELOPER, App.URL) },
-
-            /// The translator credits. Please translate this with your name(s).
-            translator_credits = _("translator-credits"),
-
-            // Legal
-            copyright = "Copyright © 2020–2024 %s".printf (App.DEVELOPER),
-            license_type = Gtk.License.GPL_3_0,
-        };
-        about_window.add_link (_("About Home Assistant"), "https://www.home-assistant.io/");
-        about_window.add_link (_("Home Assistant Privacy Policy"), "https://www.home-assistant.io/privacy/");
-
         about_window.present ();
     }
 }

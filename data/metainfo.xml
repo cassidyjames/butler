@@ -5,14 +5,14 @@
   <metadata_license>CC-BY-SA-4.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
 
-  <name>Butler for Home Assistant</name>
-  <summary>Control your smart home</summary>
+  <name>Butler</name>
+  <summary>Access your Home Assistant dashboard</summary>
   <developer_name translatable="no">Cassidy James Blaede</developer_name>
   <developer id="cassidyjames.com">
     <name translatable="no">Cassidy James Blaede</name>
   </developer>
   <description>
-    <p>Hybrid native + web app for Home Assistant. Butler wraps your Home Assistant dashboard up in a native UI, integrating better with your OS. Native features include:</p>
+    <p>Hybrid native + web companion app for Home Assistant. Butler wraps your dashboard up in a native UI, integrating better with your OS. Native features include:</p>
     <ul>
       <li>Icon in your App Grid, Applications Menu, Dash, Dock, etc.</li>
       <li>Native header bar</li>
@@ -20,6 +20,7 @@
       <li>Two-finger swipe and mouse button support to go back/forward between views</li>
       <li>Cross-desktop light/dark style support (if supported by your Lovelace theme)</li>
     </ul>
+    <p>Butler is designed to make getting at your Home Assistant dashboard easier for kiosks, your laptop/desktop, or your Linux phone. It does not support companion app features from Android and iOS like location services, notifications, or exposing device sensors.</p>
     <p>Other features include:</p>
     <ul>
       <li>Pinch-to-zoom</li>
@@ -55,6 +56,22 @@
   </screenshots>
 
   <releases>
+    <release version="1.0.2" date="2024-01-06">
+      <description>
+        <p>Small improvements</p>
+        <ul>
+          <li>Improved about window</li>
+          <li>Open links in default browser</li>
+          <li>Automatically prepend http:// to custom server if omitted</li>
+          <li>Start preparing for translations</li>
+        </ul>
+      </description>
+      <issues>
+        <issue url="https://github.com/cassidyjames/butler/issues/4">Better onboarding</issue>
+        <issue url="https://github.com/cassidyjames/butler/issues/8">Open links in default browser</issue>
+        <issue url="https://github.com/cassidyjames/butler/issues/13">Automatically prepend http:// to custom server if omitted</issue>
+      </issues>
+    </release>
     <release version="1.0.1" date="2024-01-05">
       <description>
         <p>Improved accessibility and fullscreen experience</p>

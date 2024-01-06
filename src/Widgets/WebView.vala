@@ -61,4 +61,3 @@ public class Butler.WebView : WebKit.WebView {
         add_controller (forward_click_gesture);
     }
 }
-

@@ -9,8 +9,7 @@ public class Butler.WebView : WebKit.WebView {
     public WebView () {
         Object (
             hexpand: true,
-            vexpand: true,
-            user_content_manager: new WebKit.UserContentManager ()
+            vexpand: true
         );
     }
 
@@ -30,26 +29,23 @@ public class Butler.WebView : WebKit.WebView {
             hardware_acceleration_policy = WebKit.HardwareAccelerationPolicy.ALWAYS
         };
 
-        var custom_css = new WebKit.UserStyleSheet (
-            """
-            header,
-            .header {
-              app-region: drag;
-              -webkit-app-region: drag;
-            }
-            """,
-            WebKit.UserContentInjectedFrames.TOP_FRAME,
-            WebKit.UserStyleLevel.AUTHOR,
-            null,
-            null
-        );
-        user_content_manager.add_style_sheet (custom_css);
-
         settings = webkit_settings;
-        web_context = new WebKit.WebContext ();
 
         context_menu.connect (() => {
             return !is_terminal;
+        });
+
+        decide_policy.connect ((decision, type) => {
+            if (type == WebKit.PolicyDecisionType.NEW_WINDOW_ACTION) {
+                try {
+                    new Gtk.UriLauncher (
+                        ((WebKit.NavigationPolicyDecision)decision).
+                        navigation_action.get_request ().get_uri ()
+                    ).launch.begin (null, null);
+                } catch (Error e) {
+                    critical ("Unable to open externally");
+                }
+            }
         });
 
         var back_click_gesture = new Gtk.GestureClick () {
@@ -65,3 +61,4 @@ public class Butler.WebView : WebKit.WebView {
         add_controller (forward_click_gesture);
     }
 }
+

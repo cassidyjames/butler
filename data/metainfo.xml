@@ -61,6 +61,7 @@
         <p>Small improvements</p>
         <ul>
           <li>Improved about window</li>
+          <li>Show a banner about the demo server</li>
           <li>Open links in default browser</li>
           <li>Automatically prepend http:// to custom server if omitted</li>
           <li>Start preparing for translations</li>

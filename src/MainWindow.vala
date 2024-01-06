@@ -5,9 +5,11 @@
 
 public class Butler.MainWindow : Adw.ApplicationWindow {
     public Adw.AboutWindow about_window;
+    public Adw.Banner demo_banner;
     public Adw.Toast fullscreen_toast;
     public Adw.ToastOverlay toast_overlay;
     public Gtk.Revealer header_revealer;
+    public Gtk.Revealer home_revealer;
 
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
         { "toggle_fullscreen", toggle_fullscreen },
@@ -54,6 +56,15 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         icon_name = about_window.application_icon;
         title = about_window.application_name;
 
+        var home_button = new Gtk.Button.from_icon_name ("go-home-symbolic") {
+            tooltip_text = _("Go Home")
+        };
+
+        home_revealer = new Gtk.Revealer () {
+            child = home_button,
+            transition_type = Gtk.RevealerTransitionType.SLIDE_RIGHT
+        };
+
         var site_menu = new Menu ();
         site_menu.append (_("_Log Out…"), "win.log_out");
 
@@ -74,11 +85,17 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         };
 
         var header = new Adw.HeaderBar ();
+        header.pack_start (home_revealer);
         header.pack_end (menu_button);
 
         header_revealer = new Gtk.Revealer () {
             child = header,
             reveal_child = !fullscreened
+        };
+
+        demo_banner = new Adw.Banner (_("Browsing Home Assistant Demo")) {
+            action_name = "win.set_server",
+            button_label = _("Set _Server…")
         };
 
         fullscreen_toast = new Adw.Toast (_("Press <b>Ctrl F</b> or <b>F11</b> to toggle fullscreen")) {
@@ -120,6 +137,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         };
         grid.attach (header_revealer, 0, 0);
         grid.attach (toast_overlay, 0, 1);
+        grid.attach (demo_banner, 0, 2);
 
         set_content (grid);
 
@@ -127,6 +145,10 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         App.settings.get ("window-size", "(ii)", out window_width, out window_height);
 
         set_default_size (window_width, window_height);
+
+        home_button.clicked.connect (() => {
+            web_view.load_uri (server);
+        });
 
         close_request.connect (() => {
             save_window_state ();
@@ -169,7 +191,20 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         if (web_view.is_loading) {
             // TODO: Add a loading progress bar or spinner somewhere?
         } else {
-            App.settings.set_string ("current-url", web_view.uri);
+            string default_server = App.settings.get_default_value ("server").get_string ();
+            string server = App.settings.get_string ("server");
+            string current_url = web_view.uri;
+
+            App.settings.set_string ("current-url", current_url);
+
+            if (current_url.has_prefix (default_server)) {
+                demo_banner.revealed = true;
+            } else if (current_url.has_prefix (server)) {
+                demo_banner.revealed = false;
+            } else {
+                demo_banner.revealed = false;
+                home_revealer.set_reveal_child (true);
+            }
         }
     }
 

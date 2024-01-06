@@ -37,6 +37,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         ) {
             transient_for = this,
             hide_on_close = true,
+            comments = _("Companion app to access your Home Assistant dashboard"),
 
             /// The translator credits. Please translate this with your name(s).
             translator_credits = _("translator-credits"),

@@ -43,6 +43,9 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
             /// The translator credits. Please translate this with your name(s).
             translator_credits = _("translator-credits"),
+            artists = {
+                "Jakub Steiner https://jimmac.eu/",
+            },
         };
         about_window.copyright = "© 2020–%i %s".printf (
             new DateTime.now_local ().get_year (),

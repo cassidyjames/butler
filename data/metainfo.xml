@@ -56,6 +56,19 @@
   </screenshots>
 
   <releases>
+    <release version="1.0.3" date="2024-01-06">
+      <description>
+        <p>Improved app listing</p>
+        <ul>
+          <li>New icon based on Jakub Steiner's excellent work</li>
+          <li>Refreshed summary and description to better align with Flathub recommendations</li>
+        </ul>
+      </description>
+      <issues>
+        <issue url="https://github.com/cassidyjames/butler/issues/16">Metainfo: failing summery length</issue>
+        <issue url="https://github.com/cassidyjames/butler/issues/5">Unique icon</issue>
+      </issues>
+    </release>
     <release version="1.0.2" date="2024-01-06">
       <description>
         <p>Small improvements</p>

@@ -4,7 +4,7 @@
  */
 
 public class Butler.MainWindow : Adw.ApplicationWindow {
-    public Adw.AboutWindow about_window;
+    public Adw.AboutDialog about_dialog;
     public Adw.Banner demo_banner;
     public Adw.Toast fullscreen_toast;
     public Adw.ToastOverlay toast_overlay;
@@ -23,9 +23,9 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     public MainWindow (Gtk.Application application) {
         Object (
             application: application,
-            height_request: 180,
+            height_request: 294,
             resizable: true,
-            width_request: 300
+            width_request: 360
         );
         add_action_entries (ACTION_ENTRIES, this);
     }
@@ -34,11 +34,9 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         maximized = App.settings.get_boolean ("window-maximized");
         fullscreened = App.settings.get_boolean ("window-fullscreened");
 
-        about_window = new Adw.AboutWindow.from_appdata (
+        about_dialog = new Adw.AboutDialog.from_appdata (
             "/com/cassidyjames/butler/metainfo.xml", VERSION
         ) {
-            transient_for = this,
-            hide_on_close = true,
             comments = _("Companion app to access your Home Assistant dashboard"),
 
             /// The translator credits. Please translate this with your name(s).
@@ -47,17 +45,17 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
                 "Jakub Steiner https://jimmac.eu/",
             },
         };
-        about_window.copyright = "© 2020–%i %s".printf (
+        about_dialog.copyright = "© 2020–%i %s".printf (
             new DateTime.now_local ().get_year (),
-            about_window.developer_name
+            about_dialog.developer_name
         );
-        about_window.add_link (_("About Home Assistant"), "https://www.home-assistant.io/");
-        about_window.add_link (_("Home Assistant Privacy Policy"), "https://www.home-assistant.io/privacy/");
+        about_dialog.add_link (_("About Home Assistant"), "https://www.home-assistant.io/");
+        about_dialog.add_link (_("Home Assistant Privacy Policy"), "https://www.home-assistant.io/privacy/");
 
         // Set MainWindow properties from the AppData already fetched and parsed
-        // by the AboutWindow construction
-        icon_name = about_window.application_icon;
-        title = about_window.application_name;
+        // by the AboutDialog construction
+        icon_name = about_dialog.application_icon;
+        title = about_dialog.application_name;
 
         var home_button = new Gtk.Button.from_icon_name ("go-home-symbolic") {
             tooltip_text = _("Go Home")
@@ -277,8 +275,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             placeholder_text = default_server
         };
 
-        var server_dialog = new Adw.MessageDialog (
-            this,
+        var server_dialog = new Adw.AlertDialog (
             _("Set Server URL"),
             _("Enter the full URL including any custom port")
         ) {
@@ -294,7 +291,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         server_dialog.add_response ("save", _("_Set Server"));
         server_dialog.set_response_appearance ("save", Adw.ResponseAppearance.SUGGESTED);
 
-        server_dialog.present ();
+        server_dialog.present (this);
 
         server_dialog.response.connect ((response_id) => {
             if (response_id == "save") {
@@ -323,8 +320,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     private void on_log_out_activate () {
         string server = App.settings.get_string ("server");
 
-        var log_out_dialog = new Adw.MessageDialog (
-            this,
+        var log_out_dialog = new Adw.AlertDialog (
             _("Log out of Home Assistant?"),
             _("You will need to re-enter your username and password for <b>%s</b> to log back in.").printf (server)
         ) {
@@ -335,7 +331,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         log_out_dialog.add_response ("log_out", _("_Log Out"));
         log_out_dialog.set_response_appearance ("log_out", Adw.ResponseAppearance.DESTRUCTIVE);
 
-        log_out_dialog.present ();
+        log_out_dialog.present (this);
 
         log_out_dialog.response.connect ((response_id) => {
             if (response_id == "log_out") {
@@ -345,6 +341,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     }
 
     private void on_about_activate () {
-        about_window.present ();
+        about_dialog.present (this);
     }
 }

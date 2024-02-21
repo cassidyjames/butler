@@ -17,7 +17,7 @@ jobs:
       options: --privileged
     steps:
     - uses: actions/checkout@v4
-    - uses: flathub/flatpak-github-actions/flatpak-builder@v6.2
+    - uses: flathub-infra/flatpak-github-actions/flatpak-builder@main
       with:
         bundle: butler.flatpak
         manifest-path: com.cassidyjames.butler.json

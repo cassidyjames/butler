@@ -7,10 +7,16 @@
 
   <name>Butler</name>
   <summary>Companion for Home Assistant</summary>
+  <branding>
+    <color type="primary" scheme_preference="light">#03a9f5</color>
+    <color type="primary" scheme_preference="dark">#241f31</color>
+  </branding>
+
   <developer_name translatable="no">Cassidy James Blaede</developer_name>
   <developer id="cassidyjames.com">
     <name translatable="no">Cassidy James Blaede</name>
   </developer>
+
   <description>
     <p>Access your Home Assistant dashboard from a native companion UI, integrating better with your OS. Native features include:</p>
     <ul>
@@ -35,10 +41,6 @@
   </provides>
   <launchable type="desktop-id">com.cassidyjames.butler.desktop</launchable>
 
-  <branding>
-    <color type="primary">#03a9f5</color>
-  </branding>
-
   <recommends>
     <display_length compare="ge">300</display_length>
   </recommends>
@@ -56,6 +58,19 @@
   </screenshots>
 
   <releases>
+    <release version="1.1.0" date="2024-03-01">
+      <description>
+        <p>Improved app listing</p>
+        <ul>
+          <li>Refreshed icon with better contrast</li>
+          <li>Brand colors for Flathub and app store clients</li>
+        </ul>
+      </description>
+      <issues>
+        <issue url="https://github.com/cassidyjames/butler/issues/16">Metainfo: failing summery length</issue>
+        <issue url="https://github.com/cassidyjames/butler/issues/5">Unique icon</issue>
+      </issues>
+    </release>
     <release version="1.0.3" date="2024-01-06">
       <description>
         <p>Improved app listing</p>

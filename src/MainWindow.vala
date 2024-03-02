@@ -349,4 +349,3 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         about_window.present ();
     }
 }
-

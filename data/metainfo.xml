@@ -62,7 +62,7 @@
       <description>
         <p>Improved app listing</p>
         <ul>
-          <li>Refreshed icon with better contrast</li>
+          <li>Refreshed icon with better contrast thanks to Tobias Bernard</li>
           <li>Brand colors for Flathub and app store clients</li>
         </ul>
       </description>

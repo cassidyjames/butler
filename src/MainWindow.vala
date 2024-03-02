@@ -45,6 +45,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             translator_credits = _("translator-credits"),
             artists = {
                 "Jakub Steiner https://jimmac.eu/",
+                "Tobias Bernard https://tobiasbernard.com/",
             },
         };
         about_window.copyright = "© 2020–%i %s".printf (

@@ -1,7 +1,7 @@
 project(
   'com.cassidyjames.butler',
   'vala', 'c',
-  version: '1.0.3',
+  version: '1.1.0',
   meson_version: '>=0.58',
 )
 

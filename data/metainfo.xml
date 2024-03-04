@@ -8,7 +8,7 @@
   <name>Butler</name>
   <summary>Companion for Home Assistant</summary>
   <branding>
-    <color type="primary" scheme_preference="light">#03a9f5</color>
+    <color type="primary" scheme_preference="light">#57e6ff</color>
     <color type="primary" scheme_preference="dark">#241f31</color>
   </branding>
 

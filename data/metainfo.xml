@@ -13,7 +13,7 @@
   </branding>
 
   <developer_name translatable="no">Cassidy James Blaede</developer_name>
-  <developer id="cassidyjames.com">
+  <developer id="com.cassidyjames">
     <name translatable="no">Cassidy James Blaede</name>
   </developer>
 
@@ -58,6 +58,15 @@
   </screenshots>
 
   <releases>
+    <release version="1.1.1" date="2024-03-04">
+      <description>
+        <p>Prepare for GNOME 46</p>
+        <ul>
+          <li>Tweaked light brand color for Flathub and app store clients</li>
+          <li>Updated to target GNOME 46 beta</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.1.0" date="2024-03-01">
       <description>
         <p>Improved app listing</p>
@@ -76,7 +85,7 @@
         </ul>
       </description>
       <issues>
-        <issue url="https://github.com/cassidyjames/butler/issues/16">Metainfo: failing summery length</issue>
+        <issue url="https://github.com/cassidyjames/butler/issues/16">MetaInfo: failing summery length</issue>
         <issue url="https://github.com/cassidyjames/butler/issues/5">Unique icon</issue>
       </issues>
     </release>

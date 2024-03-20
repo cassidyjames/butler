@@ -1,27 +1,27 @@
 {
-    "app-id" : "com.cassidyjames.butler",
-    "runtime" : "org.gnome.Platform",
-    "runtime-version" : "46",
-    "sdk" : "org.gnome.Sdk",
-    "command" : "com.cassidyjames.butler",
-    "finish-args" : [
-        "--socket=wayland",
-        "--socket=fallback-x11",
-        "--share=ipc",
-        "--share=network",
-        "--device=dri"
-    ],
-    "modules" : [
+  "app-id": "com.cassidyjames.butler",
+  "runtime": "org.gnome.Platform",
+  "runtime-version": "46",
+  "sdk": "org.gnome.Sdk",
+  "command": "com.cassidyjames.butler",
+  "finish-args": [
+    "--socket=wayland",
+    "--socket=fallback-x11",
+    "--share=ipc",
+    "--share=network",
+    "--device=dri"
+  ],
+  "modules": [
+    {
+      "name": "butler",
+      "buildsystem": "meson",
+      "run-tests": true,
+      "sources": [
         {
-            "name" : "butler",
-            "buildsystem" : "meson",
-            "run-tests": true,
-            "sources" : [
-                {
-                    "type" : "dir",
-                    "path" : "."
-                }
-            ]
+          "type": "dir",
+          "path": "."
         }
-    ]
+      ]
+    }
+  ]
 }

@@ -43,6 +43,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             translator_credits = _("translator-credits"),
             artists = {
                 "Jakub Steiner https://jimmac.eu/",
+                "Tobias Bernard https://tobiasbernard.com/",
             },
         };
         about_dialog.copyright = "© 2020–%i %s".printf (
@@ -160,6 +161,10 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         web_view.load_changed.connect ((load_event) => {
             if (load_event == WebKit.LoadEvent.FINISHED) {
+                // NOTE: As of WebKitGTK in the GNOME 46 SDK, this seems
+                // glitchier… not sure how to fix it. A GLib.Timeout doesn't
+                // seem to help, as it just looks glitchy after the stack child
+                // changes to the WebView.
                 stack.visible_child_name = "web";
             }
         });

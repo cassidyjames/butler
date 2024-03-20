@@ -11,13 +11,14 @@ concurrency:
 
 jobs:
   flatpak:
+    name: Flathub
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-46
       options: --privileged
     steps:
     - uses: actions/checkout@v4
-    - uses: flathub-infra/flatpak-github-actions/flatpak-builder@23796715b3dfa4c86ddf50cf29c3cc8b3c82dca8
+    - uses: flathub-infra/flatpak-github-actions/flatpak-builder@master
       with:
         bundle: butler.flatpak
         manifest-path: com.cassidyjames.butler.json

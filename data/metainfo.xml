@@ -63,6 +63,7 @@
         <p>GNOME 46</p>
         <ul>
           <li>Target GNOME 46 runtime</li>
+          <li>Improved dialogs using new Adwaita widgets</li>
           <li>Improved light brand color for Flathub and app store clients</li>
         </ul>
       </description>

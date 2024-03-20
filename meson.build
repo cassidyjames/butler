@@ -37,7 +37,7 @@ executable(
   dependencies: [
     dependency('glib-2.0'),
     dependency('gtk4'),
-    dependency('libadwaita-1', version: '>=1.4.2'),
+    dependency('libadwaita-1', version: '>=1.5'),
     dependency('webkitgtk-6.0'),
     meson.get_compiler('vala').find_library('posix'),
   ],

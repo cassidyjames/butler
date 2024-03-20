@@ -58,12 +58,12 @@
   </screenshots>
 
   <releases>
-    <release version="1.1.1" date="2024-03-04">
+    <release version="1.1.1" date="2024-03-20">
       <description>
-        <p>Prepare for GNOME 46</p>
+        <p>GNOME 46</p>
         <ul>
-          <li>Tweaked light brand color for Flathub and app store clients</li>
-          <li>Updated to target GNOME 46 beta</li>
+          <li>Target GNOME 46 runtime</li>
+          <li>Improved light brand color for Flathub and app store clients</li>
         </ul>
       </description>
     </release>

@@ -68,7 +68,8 @@
         <p>Improved app listing</p>
         <ul>
           <li>Improved light brand color for Flathub and app store clients</li>
-          <li>Updated screenshots
+          <li>Updated screenshots</li>
+        </ul>
       </description>
     </release>
     <release version="1.1.2" date="2024-04-22">

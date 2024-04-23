@@ -7,8 +7,9 @@
 
   <name>Butler</name>
   <summary>Companion for Home Assistant</summary>
+
   <branding>
-    <color type="primary" scheme_preference="light">#65ceff</color>
+    <color type="primary" scheme_preference="light">#7fd6ff</color>
     <color type="primary" scheme_preference="dark">#027bb3</color>
   </branding>
 
@@ -42,7 +43,7 @@
   <launchable type="desktop-id">com.cassidyjames.butler.desktop</launchable>
 
   <recommends>
-    <display_length compare="ge">300</display_length>
+    <display_length compare="ge">360</display_length>
   </recommends>
   <supports>
     <control>pointing</control>
@@ -52,12 +53,25 @@
 
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/cassidyjames/butler/1.0.0/data/screenshots/light.png</image>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/518b5c81e35d366fa6ea62d4835d8e9a61e039e1/data/screenshots/light.png</image>
       <caption>Home Assistant dashboard with many rooms and devices</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/518b5c81e35d366fa6ea62d4835d8e9a61e039e1/data/screenshots/dark.png</image>
+      <caption>Home Assistant dashboard in dark style</caption>
     </screenshot>
   </screenshots>
 
   <releases>
+    <release version="1.1.3" date="2024-04-23">
+      <description>
+        <p>Improved app listing</p>
+        <ul>
+          <li>Improved light brand color for Flathub and app store clients</li>
+          <li>Updated screenshots</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.1.2" date="2024-04-22">
       <description>
         <p>Improved brand colors for Flathub and app store clients</p>

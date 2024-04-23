@@ -9,7 +9,8 @@ public class Butler.WebView : WebKit.WebView {
     public WebView () {
         Object (
             hexpand: true,
-            vexpand: true
+            vexpand: true,
+            network_session: new WebKit.NetworkSession (null, null)
         );
     }
 
@@ -30,6 +31,23 @@ public class Butler.WebView : WebKit.WebView {
         };
 
         settings = webkit_settings;
+
+        var cookie_manager = network_session.get_cookie_manager ();
+        cookie_manager.set_accept_policy (WebKit.CookieAcceptPolicy.ALWAYS);
+
+        string config_dir = Path.build_path (
+            Path.DIR_SEPARATOR_S,
+            Environment.get_user_config_dir (),
+            Environment.get_prgname ()
+        );
+
+        DirUtils.create_with_parents (config_dir, 0700);
+
+        string cookies = Path.build_filename (config_dir, "cookies");
+        cookie_manager.set_persistent_storage (
+            cookies,
+            WebKit.CookiePersistentStorage.SQLITE
+        );
 
         context_menu.connect (() => {
             return !is_terminal;

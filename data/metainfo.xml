@@ -53,11 +53,11 @@
 
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/cassidyjames/butler/1.1.3/data/screenshots/light.png</image>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/518b5c81e35d366fa6ea62d4835d8e9a61e039e1/data/screenshots/light.png</image>
       <caption>Home Assistant dashboard with many rooms and devices</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/cassidyjames/butler/1.1.3/data/screenshots/dark.png</image>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/518b5c81e35d366fa6ea62d4835d8e9a61e039e1/data/screenshots/dark.png</image>
       <caption>Home Assistant dashboard in dark style</caption>
     </screenshot>
   </screenshots>

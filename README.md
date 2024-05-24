@@ -1,11 +1,12 @@
-[![Flathub](https://img.shields.io/flathub/v/com.cassidyjames.butler?logo=flathub&logoColor=white&style=for-the-badge)][flathub]
-[![Installs](https://img.shields.io/flathub/downloads/com.cassidyjames.butler?label=Installs&logo=flathub&logoColor=white&style=for-the-badge)][flathub]
+[![Only on Flathub](https://img.shields.io/badge/Only_on_Flathub-white?logo=flathub&logoColor=white&labelColor=black)][Only on Flathub]
+[![Installs](https://img.shields.io/flathub/downloads/com.cassidyjames.butler?label=Installs)][Flathub]
+[![Please do not theme this app](https://stopthemingmy.app/badge.svg)](https://stopthemingmy.app)
 
 ![Icon](data/icons/app.svg?raw=true)
 
-# Butler for Home Assistant
+# Butler
 
-**Control your smart home**
+**Companion for Home Assistant**
 
 ![Screenshot](data/screenshots/light.png)
 
@@ -38,5 +39,5 @@ If there's more interest in making this into a better-integrated companion app f
 
 I recommend using GNOME Builder for development.
 
-[flathub]: https://flathub.org/apps/details/com.cassidyjames.butler
-
+[Only on Flathub]: https://cassidyjam.es/apps#only-on-flathub
+[Flathub]: https://flathub.org/apps/details/com.cassidyjames.butler

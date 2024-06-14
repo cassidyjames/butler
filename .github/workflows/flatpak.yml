@@ -12,7 +12,6 @@ concurrency:
 jobs:
   flathub_x86_64:
     name: Flathub (x86_64)
-    if: ${{ startsWith( github.event.pull_request.title, 'aarch64' ) }}
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-46

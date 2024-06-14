@@ -10,16 +10,49 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  flatpak:
-    name: Flathub
+  flathub_x86_64:
+    name: Flathub (x86_64)
+    if: ${{ startsWith( github.event.pull_request.title, 'aarch64' ) }}
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-46
       options: --privileged
-    steps:
     - uses: actions/checkout@v4
     - uses: flathub-infra/flatpak-github-actions/flatpak-builder@master
       with:
         bundle: butler.flatpak
         manifest-path: com.cassidyjames.butler.json
         cache-key: "flatpak-builder-${{ github.sha }}"
+
+  flathub_aarch64:
+    name: Flathub (aarch64)
+    if: ${{ startsWith( github.event.pull_request.title, 'aarch64' ) }}
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-46
+      options: --privileged
+    strategy:
+      matrix:
+        arch:
+          - aarch64
+      fail-fast: true
+    steps:
+    - uses: actions/checkout@v4
+    # Docker is required by the docker/setup-qemu-action which enables emulation
+    - name: Install deps
+      run: |
+        # Use the static binaries because it's unable to use a package manager
+        curl https://download.docker.com/linux/static/stable/x86_64/docker-26.0.0.tgz --output ./docker.tgz
+        tar xzvf docker.tgz
+        mv docker/* /usr/bin
+    - name: Set up QEMU
+      id: qemu
+      uses: docker/setup-qemu-action@v3
+      with:
+        platforms: arm64
+    - uses: flathub-infra/flatpak-github-actions/flatpak-builder@master
+      with:
+        bundle: butler.flatpak
+        manifest-path: com.cassidyjames.butler.json
+        cache-key: "flatpak-builder-${{ github.sha }}"
+        arch: aarch64

@@ -32,7 +32,6 @@ jobs:
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-46
       options: --privileged
-      fail-fast: true
     steps:
     - uses: actions/checkout@v4
     # Docker is required by the docker/setup-qemu-action which enables emulation

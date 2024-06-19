@@ -19,14 +19,14 @@ public class Butler.WebView : WebKit.WebView {
 
         var webkit_settings = new WebKit.Settings () {
             default_font_family = Gtk.Settings.get_default ().gtk_font_name,
-            enable_back_forward_navigation_gestures = true,
+            // enable_back_forward_navigation_gestures = true,
             enable_developer_extras = is_terminal,
             enable_dns_prefetching = true,
             enable_html5_database = true,
             enable_html5_local_storage = true,
-            enable_smooth_scrolling = true,
-            enable_webgl = true,
-            enable_webrtc = true,
+            // enable_smooth_scrolling = true,
+            // enable_webgl = true,
+            // enable_webrtc = true,
             // hardware_acceleration_policy = WebKit.HardwareAccelerationPolicy.ALWAYS
         };
 

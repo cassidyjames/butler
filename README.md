@@ -27,7 +27,7 @@ Other features include:
 
 Butler is designed and developed on and for GNOME. As such, contributors agree to abide by the [GNOME Code of Conduct](https://wiki.gnome.org/Foundation/CodeOfConduct).
 
-<a href='https://flathub.org/apps/details/com.cassidyjames.butler'><img width='196' alt='Download on Flathub' src='https://flathub.org/assets/badges/flathub-badge-en.svg'/></a>
+<a href='https://flathub.org/apps/details/com.cassidyjames.butler'><img width='196' alt='Download on Flathub' src='https://flathub.org/api/badge?locale=en'/></a>
 
 ## Why not a web browser or PWA?
 

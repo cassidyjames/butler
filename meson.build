@@ -31,7 +31,7 @@ executable(
   meson.project_name(),
   'src' / 'App.vala',
   'src' / 'MainWindow.vala',
-  'src' / 'Widgets' / 'WebView.vala',
+  'src' / 'WebView.vala',
   asresources,
   config_file,
   dependencies: [

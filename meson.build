@@ -2,7 +2,7 @@ project(
   'com.cassidyjames.butler',
   'vala', 'c',
   version: '1.2.0',
-  meson_version: '>=0.58',
+  meson_version: '>=1.1',
 )
 
 app_id = meson.project_name()

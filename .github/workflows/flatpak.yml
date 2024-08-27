@@ -10,8 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  flatpak:
-    name: Flathub
+  flatpak-devel:
+    name: Flatpak (Devel)
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-46
@@ -20,6 +20,6 @@ jobs:
     - uses: actions/checkout@v4
     - uses: flathub-infra/flatpak-github-actions/flatpak-builder@master
       with:
-        bundle: butler.flatpak
-        manifest-path: com.cassidyjames.butler.json
+        bundle: com.cassidyjames.butler.Devel.flatpak
+        manifest-path: com.cassidyjames.butler.Devel.json
         cache-key: "flatpak-builder-${{ github.sha }}"

@@ -1,9 +1,9 @@
 {
-  "app-id": "com.cassidyjames.butler",
+  "app-id": "com.cassidyjames.butler.Devel",
   "runtime": "org.gnome.Platform",
   "runtime-version": "46",
   "sdk": "org.gnome.Sdk",
-  "command": "com.cassidyjames.butler",
+  "command": "com.cassidyjames.butler.Devel",
   "finish-args": [
     "--socket=wayland",
     "--socket=fallback-x11",
@@ -17,7 +17,7 @@
       "buildsystem": "meson",
       "run-tests": true,
       "config-opts": [
-        "-Dprofile=release"
+        "-Dprofile=development"
       ],
       "sources": [
         {

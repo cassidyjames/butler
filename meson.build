@@ -1,49 +1,41 @@
 project(
   'com.cassidyjames.butler',
   'vala', 'c',
-  version: '1.1.3',
+  version: '1.2.0',
   meson_version: '>=0.58',
 )
 
-gnome = import('gnome')
+app_id = meson.project_name()
+app_name = 'Butler'
 
-add_global_arguments('-DGETTEXT_PACKAGE="@0@"'.format(meson.project_name()), language:'c')
+profile = get_option('profile')
+if profile == 'development'
+  app_id += '.Devel'
+  app_name += ' (Devel)'
+endif
 
-asresources = gnome.compile_resources(
-  'as-resources',
-  'data' / 'gresource.xml',
-  source_dir: 'data',
-  c_name: 'as',
-)
+summary({
+  'Profile': profile,
+}, section: 'Development')
 
-config_data = configuration_data()
+config_include = include_directories('.')
 
-config_data.set_quoted('APP_ID', meson.project_name())
-config_data.set_quoted('VERSION', meson.project_version())
+config = configuration_data()
+config.set_quoted('APP_ID', app_id)
+config.set_quoted('APP_NAME', app_name)
+config.set_quoted('VERSION', meson.project_version())
+config.set_quoted('PROFILE', profile)
 
 config_file = configure_file(
   input: 'src/Config.vala.in',
   output: '@BASENAME@',
-  configuration: config_data
+  configuration: config
 )
 
-executable(
-  meson.project_name(),
-  'src' / 'App.vala',
-  'src' / 'MainWindow.vala',
-  'src' / 'Widgets' / 'WebView.vala',
-  asresources,
-  config_file,
-  dependencies: [
-    dependency('glib-2.0'),
-    dependency('gtk4'),
-    dependency('libadwaita-1', version: '>=1.5'),
-    dependency('webkitgtk-6.0'),
-    meson.get_compiler('vala').find_library('posix'),
-  ],
-  install: true
-)
+gnome = import('gnome')
+add_global_arguments('-DGETTEXT_PACKAGE="@0@"'.format(app_id), language:'c')
 
 subdir('data')
+subdir('src')
 
 meson.add_install_script('build-aux' / 'meson'/ 'post_install.py')

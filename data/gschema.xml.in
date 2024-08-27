@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-  <schema path="/com/cassidyjames/butler/" id="com.cassidyjames.butler">
+  <schema path="/com/cassidyjames/butler/" id="@app_id@">
     <key name="current-url" type="s">
       <default>""</default>
       <summary>Current URL</summary>

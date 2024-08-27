@@ -1,11 +1,11 @@
 [Desktop Entry]
-Name=Butler
+Name=@app_name@
 GenericName=Smart Home Dashboard
 Comment=Control your smart home
 Categories=Network;GTK;
-Exec=com.cassidyjames.butler
-Icon=com.cassidyjames.butler
+Exec=@app_id@
+Icon=@app_id@
 Terminal=false
 Type=Application
-X-GNOME-Gettext-Domain=com.cassidyjames.butler
+X-GNOME-Gettext-Domain=@app_id@
 Keywords=hass;home;assistant;smart;lights;

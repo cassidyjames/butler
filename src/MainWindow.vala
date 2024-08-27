@@ -20,11 +20,13 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
     private Butler.WebView web_view;
 
-    public MainWindow (Gtk.Application application) {
+    public MainWindow (Adw.Application app) {
         Object (
-            application: application,
+            application: app,
             height_request: 294,
+            icon_name: APP_ID,
             resizable: true,
+            title: APP_NAME,
             width_request: 360
         );
         add_action_entries (ACTION_ENTRIES, this);
@@ -35,7 +37,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         fullscreened = App.settings.get_boolean ("window-fullscreened");
 
         about_dialog = new Adw.AboutDialog.from_appdata (
-            "/com/cassidyjames/butler/metainfo.xml", VERSION
+            "/com/cassidyjames/butler/metainfo.xml.in", VERSION
         ) {
             comments = _("Companion app to access your Home Assistant dashboard"),
 
@@ -46,17 +48,14 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
                 "Tobias Bernard https://tobiasbernard.com/",
             },
         };
+        about_dialog.application_icon = APP_ID;
+        about_dialog.application_name = APP_NAME;
         about_dialog.copyright = "© 2020–%i %s".printf (
             new DateTime.now_local ().get_year (),
             about_dialog.developer_name
         );
         about_dialog.add_link (_("About Home Assistant"), "https://www.home-assistant.io/");
         about_dialog.add_link (_("Home Assistant Privacy Policy"), "https://www.home-assistant.io/privacy/");
-
-        // Set MainWindow properties from the AppData already fetched and parsed
-        // by the AboutDialog construction
-        icon_name = about_dialog.application_icon;
-        title = about_dialog.application_name;
 
         var home_button = new Gtk.Button.from_icon_name ("go-home-symbolic") {
             tooltip_text = _("Go Home")
@@ -74,7 +73,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         // TODO: How do I add shortcuts to the menu?
         app_menu.append (_("_Fullscreen"), "win.toggle_fullscreen");
         app_menu.append (_("Change _Server…"), "win.set_server");
-        app_menu.append (_("_About %s").printf (title), "win.about");
+        app_menu.append (_("_About %s").printf (APP_NAME), "win.about");
 
         var menu = new Menu ();
         menu.append_section (null, site_menu);

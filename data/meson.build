@@ -1,29 +1,51 @@
+data_config = configuration_data()
+data_config.set('app_id', app_id)
+data_config.set('app_name', app_name)
+
 install_data(
-  'icons' / 'app.svg',
+  'icons' / profile + '.svg',
   install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', 'scalable', 'apps'),
-  rename: meson.project_name() + '.svg'
+  rename: app_id + '.svg'
 )
 
 install_data(
   'icons' / 'symbolic.svg',
   install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', 'symbolic', 'apps'),
-  rename: meson.project_name() + '-symbolic.svg'
+  rename: app_id + '-symbolic.svg'
 )
 
-install_data(
-  'gschema.xml',
+gschema_file = configure_file(
+  input: files('gschema.xml.in'),
+  output: app_id + '.gschema.xml',
+  configuration: data_config,
+  install: true,
   install_dir: get_option('datadir') / 'glib-2.0' / 'schemas',
-  rename: meson.project_name() + '.gschema.xml'
 )
 
-install_data(
-  'launcher.desktop',
+desktop_file = configure_file(
+  input: files('launcher.desktop.in'),
+  output: app_id + '.desktop',
+  configuration: data_config,
+  install: true,
   install_dir: get_option('datadir') / 'applications',
-  rename: meson.project_name() + '.desktop'
 )
 
-install_data(
-  'metainfo.xml',
+metainfo_file = configure_file(
+  input: files('metainfo.xml.in'),
+  output: '@BASENAME@',
+  configuration: data_config,
+  install: true,
   install_dir: get_option('datadir') / 'metainfo',
-  rename: meson.project_name() + '.metainfo.xml'
 )
+
+asresources = gnome.compile_resources(
+  'as-resources',
+  'gresource.xml',
+  source_dir: 'data',
+  c_name: 'as',
+)
+
+desktop_utils = find_program('desktop-file-validate', required: false)
+if desktop_utils.found()
+  test('Validate desktop file', desktop_utils, args: [desktop_file])
+endif

@@ -9,7 +9,7 @@ app_id = meson.project_name()
 app_name = 'Butler'
 
 profile = get_option('profile')
-if profile == 'development'
+if profile == 'devel'
   app_id += '.Devel'
   app_name += ' (Devel)'
 endif

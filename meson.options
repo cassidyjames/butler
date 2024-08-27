@@ -1,1 +1,1 @@
-option('profile', type: 'combo', choices: ['development', 'release'], value: 'development', description: 'Whether this is an in-development or release build; affects app ID, icon, etc.')
+option('profile', type: 'combo', choices: ['devel', 'release'], value: 'devel', description: 'Whether this is an in-development or release build; affects app ID, icon, etc.')

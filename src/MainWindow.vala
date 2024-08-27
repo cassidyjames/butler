@@ -35,6 +35,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     construct {
         maximized = App.settings.get_boolean ("window-maximized");
         fullscreened = App.settings.get_boolean ("window-fullscreened");
+        this.add_css_class (PROFILE);
 
         about_dialog = new Adw.AboutDialog.from_appdata (
             "/com/cassidyjames/butler/metainfo.xml.in", VERSION

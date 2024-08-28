@@ -3,5 +3,6 @@
   <gresource prefix="/com/cassidyjames/butler/">
     <file preprocess="xml-stripblanks" compressed="true">metainfo.xml.in</file>
     <file alias="Devel/style.css">style.css</file>
+    <file alias="Devel/style-dark.css">style-dark.css</file>
   </gresource>
 </gresources>

@@ -65,6 +65,11 @@
   <releases>
     <release version="1.2.0" date="2024-08-27">
       <description>
+        <p>The Rise of Settings</p>
+        <ul>
+          <li>New “Settings” dialog where you can set your server URL, and more…</li>
+          <li>New “Header Bar Color” setting where you can customize the background color of the top bar, including different colors for light and dark styles</li>
+        </ul>
         <p>Under the hood</p>
         <ul>
           <li>Separate development and release profiles to make development easier</li>

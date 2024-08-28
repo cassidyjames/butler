@@ -2,7 +2,7 @@
 [![Installs](https://img.shields.io/flathub/downloads/com.cassidyjames.butler?label=Installs)][Flathub]
 [![Please do not theme this app](https://stopthemingmy.app/badge.svg)](https://stopthemingmy.app)
 
-![Icon](data/icons/app.svg?raw=true)
+![Icon](data/icons/release.svg?raw=true)
 
 # Butler
 
@@ -36,6 +36,8 @@ I don't love the state of web apps and PWAs on Linux; I prefer GNOME Web or Fire
 If there's more interest in making this into a better-integrated companion app for Linux, I welcome contributions!
 
 ## Developing and Building
+
+![Icon](data/icons/devel.svg?raw=true)
 
 I recommend using GNOME Builder for development.
 

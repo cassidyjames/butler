@@ -32,7 +32,7 @@ desktop_file = configure_file(
 
 metainfo_file = configure_file(
   input: files('metainfo.xml.in'),
-  output: '@BASENAME@',
+  output: app_id + '.metainfo.xml',
   configuration: data_config,
   install: true,
   install_dir: get_option('datadir') / 'metainfo',

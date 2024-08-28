@@ -1,6 +1,8 @@
-@define-color headerbar_bg_color #03a9f5;
-@define-color headerbar_fg_color #fff;
-@define-color headerbar_border_color #fff;
-@define-color headerbar_backdrop_color mix(@headerbar_bg_color, @window_bg_color, 0.1);
+@define-color ha_color #03a9f5;
+@define-color accent_color @ha_color;
 
-@define-color accent_color @headerbar_bg_color;
+@define-color headerbar_bg_color @headerbar_bg_light;
+@define-color headerbar_fg_color @headerbar_fg_light;
+
+@define-color headerbar_border_color @headerbar_fg_color;
+@define-color headerbar_backdrop_color mix(@headerbar_bg_color, @window_bg_color, 0.1);

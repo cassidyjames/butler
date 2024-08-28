@@ -124,7 +124,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         }
 
         var status_page = new Adw.StatusPage () {
-            title = title,
+            title = APP_NAME,
             description = _("Loading the dashboard…"),
             icon_name = APP_ID
         };

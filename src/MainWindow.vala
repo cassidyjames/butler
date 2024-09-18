@@ -4,13 +4,6 @@
  */
 
 public class Butler.MainWindow : Adw.ApplicationWindow {
-    public Adw.AboutDialog about_dialog;
-    public Adw.Banner demo_banner;
-    public Adw.Toast fullscreen_toast;
-    public Adw.ToastOverlay toast_overlay;
-    public Gtk.Revealer header_revealer;
-    public Gtk.Revealer home_revealer;
-
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
         { "toggle_fullscreen", toggle_fullscreen },
         { "settings", on_settings_activate },
@@ -18,6 +11,12 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         { "about", on_about_activate },
     };
 
+    private Adw.Banner demo_banner;
+    private Adw.Toast fullscreen_toast;
+    private Adw.ToastOverlay toast_overlay;
+    private Gtk.Revealer header_revealer;
+    private Gtk.Revealer home_revealer;
+    private Adw.AboutDialog about_dialog;
     private Butler.WebView web_view;
     private Gtk.ColorDialogButton color_light_button;
     private Gtk.ColorDialogButton color_dark_button;
@@ -173,10 +172,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         web_view.load_changed.connect ((load_event) => {
             if (load_event == WebKit.LoadEvent.FINISHED) {
-                // NOTE: As of WebKitGTK in the GNOME 46 SDK, this seems
-                // glitchier… not sure how to fix it. A GLib.Timeout doesn't
-                // seem to help, as it just looks glitchy after the stack child
-                // changes to the WebView.
                 stack.visible_child_name = "web";
             }
         });
@@ -244,6 +239,8 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             } else if (current_url.has_prefix (server)) {
                 demo_banner.revealed = false;
             } else {
+                // Somehow you got away from the server without opening a link
+                // in the browser…
                 demo_banner.revealed = false;
                 home_revealer.set_reveal_child (true);
             }
@@ -284,8 +281,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     }
 
     private void log_out () {
-        // Home Assistant doesn't use cookies for login; clear ALL to include
-        // local storage and cache
         web_view.network_session.get_website_data_manager ().clear.begin (
             WebKit.WebsiteDataTypes.ALL, 0, null, () => {
                 debug ("Cleared data; going home.");
@@ -391,7 +386,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         settings_dialog.present (this);
 
         server_entry.apply.connect (() => {
-            string new_server = server_entry.text;
+            string new_server = server_entry.text.strip ();
 
             if (new_server == "") {
                 new_server = default_server;

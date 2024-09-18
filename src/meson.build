@@ -10,7 +10,7 @@ executable(
   dependencies: [
     dependency('glib-2.0'),
     dependency('gtk4'),
-    dependency('libadwaita-1', version: '>=1.5'),
+    dependency('libadwaita-1', version: '>=1.6'),
     dependency('webkitgtk-6.0'),
     meson.get_compiler('c').find_library('m'), # GLib.Math
     meson.get_compiler('vala').find_library('posix'),

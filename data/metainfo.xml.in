@@ -63,6 +63,16 @@
   </screenshots>
 
   <releases>
+    <release version="1.3.0" date="2024-09-18">
+      <description>
+        <p>GNOME 47 “Denver”</p>
+        <ul>
+          <li>Updated with the latest GNOME 47 platform and design</li>
+          <li>Reworked adaptive “Settings” dialog with individually-resettable options</li>
+          <li>Improved reliability of saving server URLs</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.2.0" date="2024-08-27">
       <description>
         <p>The Rise of Settings</p>

@@ -6,5 +6,7 @@
     <file>style-dark.css</file>
     <file alias="Devel/style.css">style.css</file>
     <file alias="Devel/style-dark.css">style-dark.css</file>
+    <file alias="icons/scalable/actions/step-back-symbolic.svg" preprocess="xml-stripblanks">icons/step-back-symbolic.svg</file>
+    <file alias="Devel/icons/scalable/actions/step-back-symbolic.svg" preprocess="xml-stripblanks">icons/step-back-symbolic.svg</file>
   </gresource>
 </gresources>

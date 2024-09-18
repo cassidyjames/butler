@@ -76,6 +76,7 @@
         <p>GNOME 47 “Denver”</p>
         <ul>
           <li>Updated with the latest GNOME 47 platform and design</li>
+          <li>Matched the default dark header color to the Home Assistant dark theme</li>
           <li>Reworked adaptive “Settings” dialog with individually-resettable options</li>
           <li>Improved reliability of saving server URLs</li>
         </ul>

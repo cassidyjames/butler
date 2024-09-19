@@ -4,13 +4,6 @@
  */
 
 public class Butler.MainWindow : Adw.ApplicationWindow {
-    public Adw.AboutDialog about_dialog;
-    public Adw.Banner demo_banner;
-    public Adw.Toast fullscreen_toast;
-    public Adw.ToastOverlay toast_overlay;
-    public Gtk.Revealer header_revealer;
-    public Gtk.Revealer home_revealer;
-
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
         { "toggle_fullscreen", toggle_fullscreen },
         { "settings", on_settings_activate },
@@ -18,7 +11,15 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         { "about", on_about_activate },
     };
 
+    private Adw.Banner demo_banner;
+    private Adw.Toast fullscreen_toast;
+    private Adw.ToastOverlay toast_overlay;
+    private Gtk.Revealer header_revealer;
+    private Gtk.Revealer home_revealer;
+    private Adw.AboutDialog about_dialog;
     private Butler.WebView web_view;
+    private Gtk.ColorDialogButton color_light_button;
+    private Gtk.ColorDialogButton color_dark_button;
 
     private const string CSS = """
         @define-color headerbar_bg_light %s;
@@ -81,7 +82,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         var app_menu = new Menu ();
         // TODO: How do I add shortcuts to the menu?
         app_menu.append (_("_Fullscreen"), "win.toggle_fullscreen");
-        app_menu.append (_("_Server Settings"), "win.settings");
+        app_menu.append (_("_Settings"), "win.settings");
         app_menu.append (_("_About %s").printf (APP_NAME), "win.about");
 
         var menu = new Menu ();
@@ -171,10 +172,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         web_view.load_changed.connect ((load_event) => {
             if (load_event == WebKit.LoadEvent.FINISHED) {
-                // NOTE: As of WebKitGTK in the GNOME 46 SDK, this seems
-                // glitchier… not sure how to fix it. A GLib.Timeout doesn't
-                // seem to help, as it just looks glitchy after the stack child
-                // changes to the WebView.
                 stack.visible_child_name = "web";
             }
         });
@@ -242,6 +239,8 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             } else if (current_url.has_prefix (server)) {
                 demo_banner.revealed = false;
             } else {
+                // Somehow you got away from the server without opening a link
+                // in the browser…
                 demo_banner.revealed = false;
                 home_revealer.set_reveal_child (true);
             }
@@ -282,8 +281,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     }
 
     private void log_out () {
-        // Home Assistant doesn't use cookies for login; clear ALL to include
-        // local storage and cache
         web_view.network_session.get_website_data_manager ().clear.begin (
             WebKit.WebsiteDataTypes.ALL, 0, null, () => {
                 debug ("Cleared data; going home.");
@@ -317,19 +314,28 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         var current_rgba_dark = Gdk.RGBA ();
         current_rgba_dark.parse (current_color_dark);
 
+        var server_reset_button = new Gtk.Button.from_icon_name ("step-back-symbolic") {
+            tooltip_text = _("Reset to Demo"),
+            valign = Gtk.Align.CENTER,
+        };
+        server_reset_button.add_css_class ("flat");
+
         var server_entry = new Adw.EntryRow () {
             activates_default = true,
+            input_purpose = Gtk.InputPurpose.URL,
+            show_apply_button = true,
             text = current_server,
             title = _("Server URL"),
         };
+        server_entry.add_suffix (server_reset_button);
 
         var server_group = new Adw.PreferencesGroup () {
-            title = _("Server Settings"),
+            title = _("Server"),
             description = _("Enter the full URL including any custom port"),
         };
         server_group.add (server_entry);
 
-        var color_light_button = new Gtk.ColorDialogButton (new Gtk.ColorDialog ()) {
+        color_light_button = new Gtk.ColorDialogButton (new Gtk.ColorDialog ()) {
             rgba = current_rgba_light,
             valign = Gtk.Align.CENTER,
         };
@@ -341,7 +347,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         };
         color_light_row.add_suffix (color_light_button);
 
-        var color_dark_button = new Gtk.ColorDialogButton (new Gtk.ColorDialog ()) {
+        color_dark_button = new Gtk.ColorDialogButton (new Gtk.ColorDialog ()) {
             rgba = current_rgba_dark,
             valign = Gtk.Align.CENTER,
         };
@@ -353,80 +359,84 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         };
         color_dark_row.add_suffix (color_dark_button);
 
-        var colors_group = new Adw.PreferencesGroup () {
-            title = _("Header Bar Color"),
+        var color_reset_button = new Gtk.Button.from_icon_name ("step-back-symbolic") {
+            tooltip_text = _("Reset to Default"),
+            valign = Gtk.Align.CENTER,
+        };
+        color_reset_button.add_css_class ("flat");
+
+        var color_group = new Adw.PreferencesGroup () {
+            title = _("Header Colors"),
             description = _("Better match your dashboard"),
         };
-        colors_group.add (color_light_row);
-        colors_group.add (color_dark_row);
+        color_group.add (color_light_row);
+        color_group.add (color_dark_row);
+        color_group.set_header_suffix (color_reset_button);
 
-        var settings_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 24);
-        settings_box.append (server_group);
-        settings_box.append (colors_group);
+        var settings_page = new Adw.PreferencesPage ();
+        settings_page.add (server_group);
+        settings_page.add (color_group);
 
-        var settings_dialog = new Adw.AlertDialog (null, null) {
-            body_use_markup = true,
-            default_response = "save",
-            extra_child = settings_box,
+        var settings_dialog = new Adw.PreferencesDialog () {
+            content_width = 480,
+            title = _("Settings"),
         };
-        settings_dialog.add_response ("close", _("_Cancel"));
-
-        settings_dialog.add_response ("reset", _("_Reset to Default"));
-        settings_dialog.set_response_appearance ("reset", Adw.ResponseAppearance.DESTRUCTIVE);
-
-        settings_dialog.add_response ("save", _("_Save"));
-        settings_dialog.set_response_appearance ("save", Adw.ResponseAppearance.SUGGESTED);
+        settings_dialog.add (settings_page);
 
         settings_dialog.present (this);
 
-        settings_dialog.response.connect ((response_id) => {
-            switch (response_id) {
-                case "save":
-                    string new_server = server_entry.text;
-                    string new_color_light = color_light_button.get_rgba ().to_string ();
-                    string new_color_dark = color_dark_button.get_rgba ().to_string ();
+        server_entry.apply.connect (() => {
+            string new_server = server_entry.text.strip ();
 
-                    if (new_server == "") {
-                        new_server = default_server;
-                    }
+            if (new_server == "") {
+                new_server = default_server;
+            }
 
-                    if (!new_server.contains ("://")) {
-                        new_server = "http://" + new_server;
-                    }
+            if (!new_server.contains ("://")) {
+                new_server = "http://" + new_server;
+            }
 
-                    if (new_server != current_server) {
-                        // FIXME: There's currently no validation of this
-                        App.settings.set_string ("server", new_server);
-                        log_out ();
-                    }
-
-                    if (
-                        new_color_light != current_color_light ||
-                        new_color_dark != current_color_dark
-                    ) {
-                        App.settings.set (
-                            "headerbar-colors", "(ss)", new_color_light, new_color_dark
-                        );
-                        update_headerbar_colors (new_color_light, new_color_dark);
-                    }
-                    break;
-
-                case "reset":
-                    App.settings.reset ("headerbar-colors");
-                    App.settings.reset ("server");
-
-                    string color_light, color_dark;
-                    App.settings.get ("headerbar-colors", "(ss)", out color_light, out color_dark);
-                    update_headerbar_colors (color_light, color_dark);
-
-                    log_out ();
-                    break;
-
-                case "close":
-                default:
-                    break;
+            if (new_server != current_server) {
+                // FIXME: There's currently no validation of this
+                App.settings.set_string ("server", new_server);
+                log_out ();
             }
         });
+
+        server_reset_button.clicked.connect (() => {
+            server_entry.text = default_server;
+            server_entry.apply ();
+        });
+
+        color_reset_button.clicked.connect (() => {
+            string light, dark;
+
+            App.settings.reset ("headerbar-colors");
+            App.settings.get ("headerbar-colors", "(ss)", out light, out dark);
+
+            var light_rgba = Gdk.RGBA ();
+            light_rgba.parse (light);
+
+            var dark_rgba = Gdk.RGBA ();
+            dark_rgba.parse (dark);
+
+            color_light_button.rgba = light_rgba;
+            color_dark_button.rgba = dark_rgba;
+        });
+
+        color_light_button.notify["rgba"].connect (on_color_button_change);
+        color_dark_button.notify["rgba"].connect (on_color_button_change);
+    }
+
+    private void on_color_button_change () {
+        string light = color_light_button.get_rgba ().to_string ();
+        string dark = color_dark_button.get_rgba ().to_string ();
+
+        App.settings.set (
+            "headerbar-colors", "(ss)", light, dark
+        );
+
+        update_headerbar_colors (light, dark);
     }
 
     private void on_log_out_activate () {
@@ -434,10 +444,11 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         var log_out_dialog = new Adw.AlertDialog (
             _("Log out of Home Assistant?"),
-            _("You will need to re-enter your username and password for <b>%s</b> to log back in.").printf (server)
+            _("You will need to re-enter any username and password required to log back in to <b>%s</b>.").printf (server)
         ) {
             body_use_markup = true,
-            default_response = "log_out"
+            default_response = "log_out",
+            prefer_wide_layout = true,
         };
         log_out_dialog.add_response ("close", _("_Stay Logged In"));
         log_out_dialog.add_response ("log_out", _("_Log Out"));

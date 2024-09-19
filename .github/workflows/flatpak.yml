@@ -23,3 +23,16 @@ jobs:
         bundle: com.cassidyjames.butler.Devel.flatpak
         manifest-path: com.cassidyjames.butler.Devel.json
         cache-key: "flatpak-builder-${{ github.sha }}"
+  flatpak-release:
+    name: Flatpak (Release)
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-46
+      options: --privileged
+    steps:
+    - uses: actions/checkout@v4
+    - uses: flathub-infra/flatpak-github-actions/flatpak-builder@master
+      with:
+        bundle: com.cassidyjames.butler.flatpak
+        manifest-path: com.cassidyjames.butler.json
+        cache-key: "flatpak-builder-${{ github.sha }}"

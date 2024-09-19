@@ -53,16 +53,35 @@
 
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/cassidyjames/butler/518b5c81e35d366fa6ea62d4835d8e9a61e039e1/data/screenshots/light.png</image>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/3c3c6f7182049db184e6f7533326d5240ea3bdfc/data/screenshots/light.png</image>
       <caption>Home Assistant dashboard with many rooms and devices</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/cassidyjames/butler/518b5c81e35d366fa6ea62d4835d8e9a61e039e1/data/screenshots/dark.png</image>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/3c3c6f7182049db184e6f7533326d5240ea3bdfc/data/screenshots/light-settings.png</image>
+      <caption>Available settings, including server URL and custom header colors</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/3c3c6f7182049db184e6f7533326d5240ea3bdfc/data/screenshots/dark.png</image>
       <caption>Home Assistant dashboard in dark style</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/3c3c6f7182049db184e6f7533326d5240ea3bdfc/data/screenshots/dark-settings.png</image>
+      <caption>Available settings in dark style</caption>
     </screenshot>
   </screenshots>
 
   <releases>
+    <release version="1.3.0" date="2024-09-18">
+      <description>
+        <p>GNOME 47 “Denver”</p>
+        <ul>
+          <li>Updated with the latest GNOME 47 platform and design</li>
+          <li>Matched the default dark header color to the Home Assistant dark theme</li>
+          <li>Reworked adaptive “Settings” dialog with individually-resettable options</li>
+          <li>Improved reliability of saving server URLs</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.2.0" date="2024-08-27">
       <description>
         <p>The Rise of Settings</p>

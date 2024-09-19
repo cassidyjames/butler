@@ -7,7 +7,7 @@
       <description>The last-viewed URL for restoring state</description>
     </key>
     <key name="headerbar-colors" type="(ss)">
-      <default>("#03a9f5", "#03a9f5")</default>
+      <default>("#03a9f5", "#101e24")</default>
       <summary>Headerbar Colors</summary>
       <description>Colors for the header bar to better integrate into custom servers, stored as a (light, dark) pair to be used according to the system color scheme preference</description>
     </key>

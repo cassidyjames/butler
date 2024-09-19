@@ -41,5 +41,5 @@ If there's more interest in making this into a better-integrated companion app f
 
 I recommend using GNOME Builder for development.
 
-[Only on Flathub]: https://cassidyjam.es/apps#only-on-flathub
+[Only on Flathub]: https://cassidyjames.com/apps#only-on-flathub
 [Flathub]: https://flathub.org/apps/details/com.cassidyjames.butler

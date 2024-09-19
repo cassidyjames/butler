@@ -14,7 +14,7 @@ jobs:
     name: Flatpak (Devel)
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-46
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-47
       options: --privileged
     steps:
     - uses: actions/checkout@v4
@@ -27,7 +27,7 @@ jobs:
     name: Flatpak (Release)
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-46
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-47
       options: --privileged
     steps:
     - uses: actions/checkout@v4

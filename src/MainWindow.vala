@@ -109,7 +109,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             button_label = _("Change _Server…")
         };
 
-        fullscreen_toast = new Adw.Toast (_("Press <b>Ctrl F</b> or <b>F11</b> to toggle fullscreen")) {
+        fullscreen_toast = new Adw.Toast (_("Press <b>F11</b> to toggle fullscreen")) {
             action_name = "win.toggle_fullscreen",
             button_label = _("Exit _Fullscreen")
         };

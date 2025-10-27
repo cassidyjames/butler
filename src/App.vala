@@ -41,7 +41,7 @@ public class Butler.App : Adw.Application {
         add_action (zoom_default_action);
 
         set_accels_for_action ("app.quit", {"<Ctrl>Q", "<Ctrl>W"});
-        set_accels_for_action ("app.toggle_fullscreen", {"F11", "<Ctrl>F"});
+        set_accels_for_action ("app.toggle_fullscreen", {"F11"});
         set_accels_for_action ("app.zoom-in", {"<Ctrl>plus", "<Ctrl>equal"});
         set_accels_for_action ("app.zoom-out", {"<Ctrl>minus"});
         set_accels_for_action ("app.zoom-default", {"<Ctrl>0"});

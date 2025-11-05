@@ -27,7 +27,7 @@
       <li>Two-finger swipe and mouse button support to go back/forward between views</li>
       <li>Cross-desktop light/dark style support (if supported by your Lovelace theme)</li>
     </ul>
-    <p>Butler is designed to make getting at your Home Assistant dashboard easier for kiosks, your laptop/desktop, or your Linux phone. It does not currently support companion app features from Android and iOS like location services, notifications, or exposing device sensors—if you’d like to contribute those features, please .</p>
+    <p>Butler is designed to make getting at your Home Assistant dashboard easier for kiosks, your laptop/desktop, or your Linux phone. It does not currently support companion app features from Android and iOS like location services, notifications, or exposing device sensors—if you’d like to add those features, please check out the website to contribute!</p>
     <p>Other features include:</p>
     <ul>
       <li>Pinch-to-zoom</li>
@@ -78,6 +78,7 @@
           <li>Adaptive look for native UI based on header colors</li>
           <li>Updated with the latest GNOME 49 platform and design</li>
           <li>Updated the default header colors to the latest Home Assistant theme</li>
+          <li>Removed Ctrl+F from fullscreen shortcuts since it conflicts with Find</li>
         </ul>
       </description>
     </release>

@@ -14,11 +14,11 @@ jobs:
     name: Flatpak (Devel)
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-47
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-49
       options: --privileged
     steps:
     - uses: actions/checkout@v4
-    - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+    - uses: flatpak/flatpak-github-actions/flatpak-builder@v6.6
       with:
         bundle: com.cassidyjames.butler.Devel.flatpak
         manifest-path: com.cassidyjames.butler.Devel.json
@@ -27,11 +27,11 @@ jobs:
     name: Flatpak (Release)
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-47
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-49
       options: --privileged
     steps:
     - uses: actions/checkout@v4
-    - uses: flathub-infra/flatpak-github-actions/flatpak-builder@master
+    - uses: flatpak/flatpak-github-actions/flatpak-builder@v6.6
       with:
         bundle: com.cassidyjames.butler.flatpak
         manifest-path: com.cassidyjames.butler.json

@@ -1,2 +1,4 @@
-@define-color headerbar_bg_color @headerbar_bg_dark;
-@define-color headerbar_fg_color @headerbar_fg_dark;
+:root {
+  --headerbar-bg-color: var(--headerbar-bg-dark);
+  --headerbar-fg-color: var(--headerbar-fg-dark);
+}

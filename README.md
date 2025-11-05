@@ -18,6 +18,8 @@ Hybrid native + web app for Home Assistant. Butler wraps your Home Assistant das
 - Two-finger swipe and mouse button support to go back/forward between views
 - Cross-desktop light/dark style support for GNOME, elementary OS, etc.
 
+Butler is designed to make getting at your Home Assistant dashboard easier for kiosks, your laptop/desktop, or your Linux phone. It does not currently support companion app features from Android and iOS like location services, notifications, or exposing device sensors—if you’d like to add those features, you're in the right place!
+
 Other features include:
 
 - Pinch-to-zoom

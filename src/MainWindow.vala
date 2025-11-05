@@ -1,6 +1,6 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: 2020–2024 Cassidy James Blaede <c@ssidyjam.es>
+ * SPDX-FileCopyrightText: 2020–2025 Cassidy James Blaede <c@ssidyjam.es>
  */
 
 public class Butler.MainWindow : Adw.ApplicationWindow {
@@ -22,11 +22,13 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     private Gtk.ColorDialogButton color_dark_button;
 
     private const string CSS = """
-        @define-color headerbar_bg_light %s;
-        @define-color headerbar_fg_light %s;
+        :root {
+          --headerbar-bg-light: %s;
+          --headerbar-fg-light: %s;
 
-        @define-color headerbar_bg_dark %s;
-        @define-color headerbar_fg_dark %s;
+          --headerbar-bg-dark: %s;
+          --headerbar-fg-dark: %s;
+        }
     """;
     private Gtk.CssProvider css_provider;
 
@@ -106,7 +108,8 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         demo_banner = new Adw.Banner (_("Browsing Home Assistant Demo")) {
             action_name = "win.settings",
-            button_label = _("Change _Server…")
+            button_label = _("Change _Server…"),
+            button_style = Adw.BannerButtonStyle.SUGGESTED,
         };
 
         fullscreen_toast = new Adw.Toast (_("Press <b>F11</b> to toggle fullscreen")) {

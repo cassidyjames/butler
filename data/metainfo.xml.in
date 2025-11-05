@@ -53,19 +53,19 @@
 
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/cassidyjames/butler/3c3c6f7182049db184e6f7533326d5240ea3bdfc/data/screenshots/light.png</image>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/939d5d9daaf819b937495c6ab2f3ddcff3bef8c2/data/screenshots/light.png</image>
       <caption>Home Assistant dashboard with many rooms and devices</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/cassidyjames/butler/3c3c6f7182049db184e6f7533326d5240ea3bdfc/data/screenshots/light-settings.png</image>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/939d5d9daaf819b937495c6ab2f3ddcff3bef8c2/data/screenshots/light-settings.png</image>
       <caption>Available settings, including server URL and custom header colors</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/cassidyjames/butler/3c3c6f7182049db184e6f7533326d5240ea3bdfc/data/screenshots/dark.png</image>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/939d5d9daaf819b937495c6ab2f3ddcff3bef8c2/data/screenshots/dark.png</image>
       <caption>Home Assistant dashboard in dark style</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/cassidyjames/butler/3c3c6f7182049db184e6f7533326d5240ea3bdfc/data/screenshots/dark-settings.png</image>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/939d5d9daaf819b937495c6ab2f3ddcff3bef8c2/data/screenshots/dark-settings.png</image>
       <caption>Available settings in dark style</caption>
     </screenshot>
   </screenshots>

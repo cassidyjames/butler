@@ -108,7 +108,8 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         demo_banner = new Adw.Banner (_("Browsing Home Assistant Demo")) {
             action_name = "win.settings",
-            button_label = _("Change _Server…")
+            button_label = _("Change _Server…"),
+            button_style = Adw.BannerButtonStyle.SUGGESTED,
         };
 
         fullscreen_toast = new Adw.Toast (_("Press <b>F11</b> to toggle fullscreen")) {

@@ -1,8 +1,16 @@
-@define-color ha_color #03a9f5;
-@define-color accent_color @ha_color;
+:root {
+  --headerbar-bg-color: var(--headerbar-bg-light);
+  --headerbar-fg-color: var(--headerbar-fg-light);
 
-@define-color headerbar_bg_color @headerbar_bg_light;
-@define-color headerbar_fg_color @headerbar_fg_light;
+  --headerbar-border-color: var(--headerbar-fg-color);
+  --headerbar-backdrop-color: var(--headerbar-bg-color);
 
-@define-color headerbar_border_color @headerbar_fg_color;
-@define-color headerbar_backdrop_color mix(@headerbar_bg_color, @window_bg_color, 0.1);
+  --accent-bg-color: var(--headerbar-bg-color);
+  --accent-color: oklab(from var(--accent-bg-color) var(--standalone-color-oklab));
+  --accent-fg-color: var(--headerbar-fg-color);
+
+  --window-bg-color: color-mix(in oklab, var(--accent-color), var(--view-bg-color) 90%);
+  --window-fg-color: color-mix(in oklab, var(--accent-color), var(--view-fg-color) 50%);
+  --popover-bg-color: var(--window-bg-color);
+  --popover-fg-color: var(--window-fg-color);
+}

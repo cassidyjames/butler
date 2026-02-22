@@ -12,6 +12,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     private extern static void add_css_provider_for_display (Gdk.Display display, Gtk.StyleProvider provider, uint priority);
 
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
+        { "reload", on_reload_activate },
         { "toggle_fullscreen", toggle_fullscreen },
         { "settings", on_settings_activate },
         { "log_out", on_log_out_activate },
@@ -278,6 +279,10 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             header_revealer.set_reveal_child (false);
             toast_overlay.add_toast (fullscreen_toast);
         }
+    }
+
+    private void on_reload_activate () {
+        web_view.reload ();
     }
 
     private void on_settings_activate () {

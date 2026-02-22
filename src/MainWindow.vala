@@ -30,6 +30,8 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     [GtkChild] private unowned Adw.StatusPage error_page;
     [GtkChild] private unowned Gtk.Button error_retry_button;
 
+    [GtkChild] private unowned Gtk.Label zoom_label;
+
     private Adw.AboutDialog about_dialog;
     private Butler.WebView web_view;
     private string? last_failed_uri = null;
@@ -109,6 +111,10 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         stack.add_named (web_view, "web");
 
+        web_view.notify["zoom-level"].connect (() => {
+            zoom_label.label = zoom_label_text ();
+        });
+
         string headerbar_color_light, headerbar_color_dark;
         App.settings.get ("headerbar-colors", "(ss)", out headerbar_color_light, out headerbar_color_dark);
         update_headerbar_colors (headerbar_color_light, headerbar_color_dark);
@@ -160,6 +166,10 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         web_view.notify["is-loading"].connect (on_loading);
 
         App.settings.bind ("zoom", web_view, "zoom-level", SettingsBindFlags.DEFAULT);
+    }
+
+    private string zoom_label_text () {
+        return "%d%%".printf ((int) GLib.Math.round (web_view.zoom_level * 100));
     }
 
     private void update_headerbar_colors (string light, string dark) {

@@ -14,6 +14,9 @@ Adw.Toast fullscreen_toast {
 
 menu main_menu {
   section {
+    item { custom: "zoom"; }
+  }
+  section {
     item (_("_Reload"), "win.reload")
     item (_("_Log Out…"), "win.log_out")
   }
@@ -49,7 +52,43 @@ template $ButlerMainWindow : Adw.ApplicationWindow {
         Gtk.MenuButton {
           icon-name: "open-menu-symbolic";
           tooltip-text: _("Main Menu");
-          menu-model: main_menu;
+
+          popover: Gtk.PopoverMenu {
+            menu-model: main_menu;
+
+            [zoom]
+            Gtk.Box {
+              homogeneous: true;
+              margin-top: 4;
+              margin-bottom: 4;
+              margin-start: 4;
+              margin-end: 4;
+
+              styles ["linked"]
+
+              Gtk.Button {
+                icon-name: "zoom-out-symbolic";
+                tooltip-text: _("Zoom Out");
+                action-name: "app.zoom-out";
+              }
+
+              Gtk.Button {
+                action-name: "app.zoom-default";
+                tooltip-text: _("Reset Zoom");
+
+                child: Gtk.Label zoom_label {
+                  width-chars: 4;
+                  label: "100%";
+                };
+              }
+
+              Gtk.Button {
+                icon-name: "zoom-in-symbolic";
+                tooltip-text: _("Zoom In");
+                action-name: "app.zoom-in";
+              }
+            }
+          };
         }
       }
     }

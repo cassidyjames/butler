@@ -1,3 +1,8 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-FileCopyrightText: 2018–2026 Cassidy James Blaede <c@ssidyjam.es>
+ */
+
 using Gtk 4.0;
 using Adw 1;
 
@@ -52,14 +57,52 @@ template $ButlerMainWindow : Adw.ApplicationWindow {
       vexpand: true;
 
       Gtk.Stack stack {
-        transition-duration: 400;
-        transition-type: under_up;
+        transition-duration: 250;
+        transition-type: crossfade;
 
-        styles ["loading"]
+        styles [
+          "loading",
+        ]
 
         Gtk.StackPage {
           name: "loading";
-          child: Adw.StatusPage status_page {};
+          child: Adw.StatusPage loading_page {};
+        }
+
+        Gtk.StackPage {
+          name: "error";
+
+          child: Adw.StatusPage error_page {
+            icon-name: "network-error-symbolic";
+            title: _("Unable to Load Page");
+
+            child: Gtk.Box {
+              orientation: vertical;
+              spacing: 12;
+              halign: center;
+
+              Gtk.Button error_retry_button {
+                label: _("_Retry");
+                use-underline: true;
+
+                styles [
+                  "pill",
+                  "suggested-action",
+                ]
+              }
+
+              Gtk.Button {
+                label: _("Change _Server…");
+                use-underline: true;
+                action-name: "win.settings";
+
+                styles [
+                  "pill",
+                  "flat",
+                ]
+              }
+            };
+          };
         }
       }
     }
@@ -68,7 +111,7 @@ template $ButlerMainWindow : Adw.ApplicationWindow {
       title: _("Browsing Home Assistant Demo");
       action-name: "win.settings";
       button-label: _("Change _Server…");
-      button-style: suggested;
+      // button-style: suggested;
     }
   };
 }

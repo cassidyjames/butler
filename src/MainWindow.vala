@@ -25,10 +25,13 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     [GtkChild] private unowned Adw.ToastOverlay toast_overlay;
     [GtkChild] private unowned Adw.Banner demo_banner;
     [GtkChild] private unowned Gtk.Stack stack;
-    [GtkChild] private unowned Adw.StatusPage status_page;
+    [GtkChild] private unowned Adw.StatusPage loading_page;
+    [GtkChild] private unowned Adw.StatusPage error_page;
+    [GtkChild] private unowned Gtk.Button error_retry_button;
 
     private Adw.AboutDialog about_dialog;
     private Butler.WebView web_view;
+    private string? last_failed_uri = null;
 
     private const string CSS = """
         :root {
@@ -67,9 +70,11 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         header_revealer.reveal_child = !fullscreened;
 
-        status_page.title = APP_NAME;
-        status_page.description = _("Loading the dashboard…");
-        status_page.icon_name = APP_ID;
+        loading_page.title = APP_NAME;
+        loading_page.description = _("Loading the dashboard…");
+        loading_page.icon_name = APP_ID;
+
+        error_page.icon_name = APP_ID;
 
         about_dialog = new Adw.AboutDialog.from_appdata (
             "/com/cassidyjames/butler/metainfo.xml.in", VERSION
@@ -124,8 +129,27 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         notify["maximized"].connect (save_window_state);
 
         web_view.load_changed.connect ((load_event) => {
-            if (load_event == WebKit.LoadEvent.FINISHED) {
+            if (load_event == WebKit.LoadEvent.STARTED) {
+                last_failed_uri = null;
+                if (stack.visible_child_name == "error") {
+                    stack.visible_child_name = "loading";
+                }
+            } else if (load_event == WebKit.LoadEvent.FINISHED && last_failed_uri == null) {
                 stack.visible_child_name = "web";
+            }
+        });
+
+        web_view.load_failed.connect ((load_event, failing_uri, error) => {
+            last_failed_uri = failing_uri;
+            error_page.description = error.message;
+            demo_banner.revealed = false;
+            stack.visible_child_name = "error";
+            return true;
+        });
+
+        error_retry_button.clicked.connect (() => {
+            if (last_failed_uri != null) {
+                web_view.load_uri (last_failed_uri);
             }
         });
 
@@ -180,6 +204,8 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     private void on_loading () {
         if (web_view.is_loading) {
             // TODO: Add a loading progress bar or spinner somewhere?
+        } else if (last_failed_uri != null) {
+            demo_banner.revealed = false;
         } else {
             string default_server = App.settings.get_default_value ("server").get_string ();
             string server = App.settings.get_string ("server");

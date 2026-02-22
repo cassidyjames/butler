@@ -26,13 +26,12 @@
   --headerbar-border-color: var(--headerbar-fg-color);
   --headerbar-backdrop-color: var(--headerbar-bg-color);
 
-  --accent-bg-color: var(--headerbar-bg-color);
+  --accent-bg-color: color-mix(in oklab, var(--headerbar-bg-color), var(--headerbar-fg-color) 5%);
   --accent-fg-color: var(--headerbar-fg-color);
   --accent-color: var(--accent-fg-color);
 
-  --window-bg-color: color-mix(in oklab, var(--headerbar-bg-color), var(--headerbar-fg-color) 10%);
-  --window-bg-color: var(--accent-bg-color);
-  --window-fg-color: var(--accent-fg-color);
+  --window-bg-color: var(--headerbar-bg-color);
+  --window-fg-color: var(--headerbar-fg-color);
   --popover-bg-color: var(--window-bg-color);
   --popover-fg-color: var(--window-fg-color);
 

@@ -1,6 +1,10 @@
 :root {
   --headerbar-bg-color: var(--headerbar-bg-light);
   --headerbar-fg-color: var(--headerbar-fg-light);
+
+  --headerbar-border-color: var(--headerbar-fg-color);
+  --headerbar-backdrop-color: var(--headerbar-bg-color);
+  --headerbar-shade-color: color-mix(in oklab, var(--headerbar-bg-color), var(--headerbar-fg-color) 12.5%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,9 +27,6 @@
 }
 
 .expressive {
-  --headerbar-border-color: var(--headerbar-fg-color);
-  --headerbar-backdrop-color: var(--headerbar-bg-color);
-
   --accent-bg-color: color-mix(in oklab, var(--headerbar-bg-color), var(--headerbar-fg-color) 5%);
   --accent-fg-color: var(--headerbar-fg-color);
   --accent-color: var(--accent-fg-color);

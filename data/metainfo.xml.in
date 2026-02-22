@@ -77,6 +77,8 @@
         <ul>
           <li>Completely reworked adaptive UI coloring behind “expressive” preference</li>
           <li>Thinner titlebar style for less wasted space</li>
+          <li>New “reload” menu item for those times your dashboard isn’t cooperating</li>
+          <li>Prettier error handling with relevant next steps</li>
           <li>Updated the default header colors to the latest Home Assistant theme</li>
           <li>Under-the-hood refactoring for improved performance and maintainability</li>
         </ul>

@@ -1,6 +1,6 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: 2020–2024 Cassidy James Blaede <c@ssidyjam.es>
+ * SPDX-FileCopyrightText: 2020–2026 Cassidy James Blaede <c@ssidyjam.es>
  */
 
 public class Butler.App : Adw.Application {
@@ -26,7 +26,7 @@ public class Butler.App : Adw.Application {
 
     protected override void activate () {
         var app_window = new MainWindow (this);
-        app_window.show ();
+        app_window.present ();
 
         var quit_action = new SimpleAction ("quit", null);
         var toggle_fullscreen_action = new SimpleAction ("toggle_fullscreen", null);

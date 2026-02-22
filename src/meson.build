@@ -2,6 +2,7 @@ executable(
   app_id,
   'App.vala',
   'MainWindow.vala',
+  'SettingsDialog.vala',
   'Utils.vala',
   'Widgets' / 'WebView.vala',
   asresources,

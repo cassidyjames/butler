@@ -38,10 +38,26 @@ metainfo_file = configure_file(
   install_dir: get_option('datadir') / 'metainfo',
 )
 
+blueprint_compiler = find_program('blueprint-compiler')
+
+blueprints = custom_target(
+  'blueprints',
+  input: files('ui/main-window.blp', 'ui/settings-dialog.blp'),
+  output: '.',
+  command: [
+    blueprint_compiler,
+    'batch-compile',
+    '@OUTPUT@',
+    '@CURRENT_SOURCE_DIR@',
+    '@INPUT@',
+  ],
+)
+
 asresources = gnome.compile_resources(
   'as-resources',
   'gresource.xml',
-  source_dir: 'data',
+  source_dir: ['data', meson.current_build_dir()],
+  dependencies: blueprints,
   c_name: 'as',
 )
 

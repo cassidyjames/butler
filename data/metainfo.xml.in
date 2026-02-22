@@ -71,6 +71,17 @@
   </screenshots>
 
   <releases>
+    <release version="1.5.0" date="2026-02-21">
+      <description>
+        <p>Expressive refresh</p>
+        <ul>
+          <li>Completely reworked adaptive UI coloring behind “expressive” preference</li>
+          <li>Thinner titlebar style for less wasted space</li>
+          <li>Updated the default header colors to the latest Home Assistant theme</li>
+          <li>Under-the-hood refactoring for improved performance and maintainability</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.4.0" date="2025-10-04">
       <description>
         <p>GNOME 49 “Brescia”</p>

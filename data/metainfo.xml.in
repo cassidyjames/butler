@@ -87,6 +87,11 @@
   </screenshots>
 
   <releases>
+    <release version="1.6.0" date="2026-02-22">
+      <description>
+        <p>New zoom item in menu</p>
+      </description>
+    </release>
     <release version="1.5.0" date="2026-02-21">
       <description>
         <p>Expressive refresh</p>

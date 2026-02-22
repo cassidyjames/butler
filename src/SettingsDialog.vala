@@ -59,6 +59,7 @@ public class Butler.SettingsDialog : Adw.PreferencesDialog {
             string light, dark;
 
             App.settings.reset ("headerbar-colors");
+            App.settings.reset ("expressive-styling");
             App.settings.get ("headerbar-colors", "(ss)", out light, out dark);
 
             var light_rgba = Gdk.RGBA ();

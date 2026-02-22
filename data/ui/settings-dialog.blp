@@ -1,0 +1,73 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $ButlerSettingsDialog : Adw.PreferencesDialog {
+  content-width: 480;
+  title: _("Settings");
+
+  Adw.PreferencesPage {
+    Adw.PreferencesGroup {
+      title: _("Server");
+      description: _("Enter the full URL including any custom port");
+
+      Adw.EntryRow server_entry {
+        activates-default: true;
+        input-purpose: url;
+        show-apply-button: true;
+        title: _("Server URL");
+
+        [suffix]
+        Gtk.Button server_reset_button {
+          icon-name: "step-back-symbolic";
+          tooltip-text: _("Reset to Demo");
+          valign: center;
+
+          styles ["flat"]
+        }
+      }
+    }
+
+    Adw.PreferencesGroup {
+      title: _("Header Colors");
+      description: _("Better match your dashboard");
+
+      [header-suffix]
+      Gtk.Button color_reset_button {
+        icon-name: "step-back-symbolic";
+        tooltip-text: _("Reset to Default");
+        valign: center;
+
+        styles ["flat"]
+      }
+
+      Adw.ActionRow {
+        title: _("Light");
+        subtitle: _("Used with default system style preference");
+        activatable-widget: color_light_button;
+
+        [suffix]
+        Gtk.ColorDialogButton color_light_button {
+          dialog: Gtk.ColorDialog {};
+          valign: center;
+        }
+      }
+
+      Adw.ActionRow {
+        title: _("Dark");
+        subtitle: _("Used with dark system style preference");
+        activatable-widget: color_dark_button;
+
+        [suffix]
+        Gtk.ColorDialogButton color_dark_button {
+          dialog: Gtk.ColorDialog {};
+          valign: center;
+        }
+      }
+
+      Adw.SwitchRow expressive_row {
+        title: _("Expressive");
+        subtitle: _("Tint the whole UI; may reduce contrast");
+      }
+    }
+  }
+}

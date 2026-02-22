@@ -1,0 +1,74 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.Toast fullscreen_toast {
+  title: _("Press <b>F11</b> to toggle fullscreen");
+  action-name: "win.toggle_fullscreen";
+  button-label: _("Exit _Fullscreen");
+}
+
+menu main_menu {
+  section {
+    item (_("_Log Out…"), "win.log_out")
+  }
+  section {
+    item (_("_Fullscreen"), "win.toggle_fullscreen")
+    item (_("_Settings"), "win.settings")
+    item (_("_About Butler"), "win.about")
+  }
+}
+
+template $ButlerMainWindow : Adw.ApplicationWindow {
+  width-request: 360;
+  height-request: 294;
+  resizable: true;
+
+  content: Gtk.Box {
+    orientation: vertical;
+
+    Gtk.Revealer header_revealer {
+      Adw.HeaderBar main_headerbar {
+        name: "main-headerbar";
+        [start]
+        Gtk.Revealer home_revealer {
+          transition-type: slide_right;
+
+          Gtk.Button home_button {
+            icon-name: "go-home-symbolic";
+            tooltip-text: _("Go Home");
+          }
+        }
+
+        [end]
+        Gtk.MenuButton {
+          icon-name: "open-menu-symbolic";
+          tooltip-text: _("Main Menu");
+          menu-model: main_menu;
+        }
+      }
+    }
+
+    Adw.ToastOverlay toast_overlay {
+      vexpand: true;
+
+      Gtk.Stack stack {
+        transition-duration: 400;
+        transition-type: under_up;
+
+        styles ["loading"]
+
+        Gtk.StackPage {
+          name: "loading";
+          child: Adw.StatusPage status_page {};
+        }
+      }
+    }
+
+    Adw.Banner demo_banner {
+      title: _("Browsing Home Assistant Demo");
+      action-name: "win.settings";
+      button-label: _("Change _Server…");
+      button-style: suggested;
+    }
+  };
+}

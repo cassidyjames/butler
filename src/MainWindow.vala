@@ -1,25 +1,38 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: 2020–2025 Cassidy James Blaede <c@ssidyjam.es>
+ * SPDX-FileCopyrightText: 2020–2026 Cassidy James Blaede <c@ssidyjam.es>
  */
 
+[GtkTemplate (ui = "/com/cassidyjames/butler/ui/main-window.ui")]
 public class Butler.MainWindow : Adw.ApplicationWindow {
+    // gtk_style_context_add_provider_for_display has no non-deprecated Vala
+    // binding; the GtkStyleContext class was deprecated in 4.10 but this C
+    // function remains the correct way to add a global CSS provider.
+    [CCode (cname = "gtk_style_context_add_provider_for_display")]
+    private extern static void add_css_provider_for_display (Gdk.Display display, Gtk.StyleProvider provider, uint priority);
+
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
+        { "reload", on_reload_activate },
         { "toggle_fullscreen", toggle_fullscreen },
         { "settings", on_settings_activate },
         { "log_out", on_log_out_activate },
         { "about", on_about_activate },
     };
 
-    private Adw.Banner demo_banner;
-    private Adw.Toast fullscreen_toast;
-    private Adw.ToastOverlay toast_overlay;
-    private Gtk.Revealer header_revealer;
-    private Gtk.Revealer home_revealer;
+    [GtkChild] private unowned Gtk.Revealer header_revealer;
+    [GtkChild] private unowned Gtk.Revealer home_revealer;
+    [GtkChild] private unowned Gtk.Button home_button;
+    [GtkChild] private unowned Adw.Toast fullscreen_toast;
+    [GtkChild] private unowned Adw.ToastOverlay toast_overlay;
+    [GtkChild] private unowned Adw.Banner demo_banner;
+    [GtkChild] private unowned Gtk.Stack stack;
+    [GtkChild] private unowned Adw.StatusPage loading_page;
+    [GtkChild] private unowned Adw.StatusPage error_page;
+    [GtkChild] private unowned Gtk.Button error_retry_button;
+
     private Adw.AboutDialog about_dialog;
     private Butler.WebView web_view;
-    private Gtk.ColorDialogButton color_light_button;
-    private Gtk.ColorDialogButton color_dark_button;
+    private string? last_failed_uri = null;
 
     private const string CSS = """
         :root {
@@ -33,14 +46,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     private Gtk.CssProvider css_provider;
 
     public MainWindow (Adw.Application app) {
-        Object (
-            application: app,
-            height_request: 294,
-            icon_name: APP_ID,
-            resizable: true,
-            title: APP_NAME,
-            width_request: 360
-        );
+        Object (application: app);
         add_action_entries (ACTION_ENTRIES, this);
     }
 
@@ -48,6 +54,28 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         maximized = App.settings.get_boolean ("window-maximized");
         fullscreened = App.settings.get_boolean ("window-fullscreened");
         add_css_class (PROFILE);
+
+        if (App.settings.get_boolean ("expressive-styling")) {
+            add_css_class ("expressive");
+        }
+        App.settings.changed["expressive-styling"].connect (() => {
+            if (App.settings.get_boolean ("expressive-styling")) {
+                add_css_class ("expressive");
+            } else {
+                remove_css_class ("expressive");
+            }
+        });
+
+        title = APP_NAME;
+        icon_name = APP_ID;
+
+        header_revealer.reveal_child = !fullscreened;
+
+        loading_page.title = APP_NAME;
+        loading_page.description = _("Loading the dashboard…");
+        loading_page.icon_name = APP_ID;
+
+        error_page.icon_name = APP_ID;
 
         about_dialog = new Adw.AboutDialog.from_appdata (
             "/com/cassidyjames/butler/metainfo.xml.in", VERSION
@@ -69,54 +97,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         about_dialog.add_link (_("About Home Assistant"), "https://www.home-assistant.io/");
         about_dialog.add_link (_("Home Assistant Privacy Policy"), "https://www.home-assistant.io/privacy/");
 
-        var home_button = new Gtk.Button.from_icon_name ("go-home-symbolic") {
-            tooltip_text = _("Go Home")
-        };
-
-        home_revealer = new Gtk.Revealer () {
-            child = home_button,
-            transition_type = Gtk.RevealerTransitionType.SLIDE_RIGHT
-        };
-
-        var site_menu = new Menu ();
-        site_menu.append (_("_Log Out…"), "win.log_out");
-
-        var app_menu = new Menu ();
-        // TODO: How do I add shortcuts to the menu?
-        app_menu.append (_("_Fullscreen"), "win.toggle_fullscreen");
-        app_menu.append (_("_Settings"), "win.settings");
-        app_menu.append (_("_About %s").printf (APP_NAME), "win.about");
-
-        var menu = new Menu ();
-        menu.append_section (null, site_menu);
-        menu.append_section (null, app_menu);
-
-        var menu_button = new Gtk.MenuButton () {
-            icon_name = "open-menu-symbolic",
-            menu_model = menu,
-            tooltip_text = _("Main Menu"),
-        };
-
-        var header = new Adw.HeaderBar ();
-        header.pack_start (home_revealer);
-        header.pack_end (menu_button);
-
-        header_revealer = new Gtk.Revealer () {
-            child = header,
-            reveal_child = !fullscreened
-        };
-
-        demo_banner = new Adw.Banner (_("Browsing Home Assistant Demo")) {
-            action_name = "win.settings",
-            button_label = _("Change _Server…"),
-            button_style = Adw.BannerButtonStyle.SUGGESTED,
-        };
-
-        fullscreen_toast = new Adw.Toast (_("Press <b>F11</b> to toggle fullscreen")) {
-            action_name = "win.toggle_fullscreen",
-            button_label = _("Exit _Fullscreen")
-        };
-
         web_view = new Butler.WebView ();
 
         string server = App.settings.get_string ("server");
@@ -127,35 +107,11 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             web_view.load_uri (server);
         }
 
-        var status_page = new Adw.StatusPage () {
-            title = APP_NAME,
-            description = _("Loading the dashboard…"),
-            icon_name = APP_ID
-        };
-
-        var stack = new Gtk.Stack () {
-            // Half speed since it's such a huge distance
-            transition_duration = 400,
-            transition_type = Gtk.StackTransitionType.UNDER_UP
-        };
-        stack.add_css_class ("loading");
-        stack.add_named (status_page, "loading");
         stack.add_named (web_view, "web");
 
         string headerbar_color_light, headerbar_color_dark;
         App.settings.get ("headerbar-colors", "(ss)", out headerbar_color_light, out headerbar_color_dark);
         update_headerbar_colors (headerbar_color_light, headerbar_color_dark);
-
-        toast_overlay = new Adw.ToastOverlay () {
-            child = stack
-        };
-
-        var box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-        box.append (header_revealer);
-        box.append (toast_overlay);
-        box.append (demo_banner);
-
-        set_content (box);
 
         int window_width, window_height;
         App.settings.get ("window-size", "(ii)", out window_width, out window_height);
@@ -174,8 +130,27 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         notify["maximized"].connect (save_window_state);
 
         web_view.load_changed.connect ((load_event) => {
-            if (load_event == WebKit.LoadEvent.FINISHED) {
+            if (load_event == WebKit.LoadEvent.STARTED) {
+                last_failed_uri = null;
+                if (stack.visible_child_name == "error") {
+                    stack.visible_child_name = "loading";
+                }
+            } else if (load_event == WebKit.LoadEvent.FINISHED && last_failed_uri == null) {
                 stack.visible_child_name = "web";
+            }
+        });
+
+        web_view.load_failed.connect ((load_event, failing_uri, error) => {
+            last_failed_uri = failing_uri;
+            error_page.description = error.message;
+            demo_banner.revealed = false;
+            stack.visible_child_name = "error";
+            return true;
+        });
+
+        error_retry_button.clicked.connect (() => {
+            if (last_failed_uri != null) {
+                web_view.load_uri (last_failed_uri);
             }
         });
 
@@ -204,7 +179,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         );
 
         css_provider.load_from_string (css);
-        Gtk.StyleContext.add_provider_for_display (
+        add_css_provider_for_display (
             Gdk.Display.get_default (),
             css_provider,
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1
@@ -230,6 +205,8 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     private void on_loading () {
         if (web_view.is_loading) {
             // TODO: Add a loading progress bar or spinner somewhere?
+        } else if (last_failed_uri != null) {
+            demo_banner.revealed = false;
         } else {
             string default_server = App.settings.get_default_value ("server").get_string ();
             string server = App.settings.get_string ("server");
@@ -304,142 +281,15 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         }
     }
 
-    private void on_settings_activate () {
-        string current_server = App.settings.get_string ("server");
-        string default_server = App.settings.get_default_value ("server").get_string ();
-
-        string current_color_light, current_color_dark;
-        App.settings.get ("headerbar-colors", "(ss)", out current_color_light, out current_color_dark);
-
-        var current_rgba_light = Gdk.RGBA ();
-        current_rgba_light.parse (current_color_light);
-
-        var current_rgba_dark = Gdk.RGBA ();
-        current_rgba_dark.parse (current_color_dark);
-
-        var server_reset_button = new Gtk.Button.from_icon_name ("step-back-symbolic") {
-            tooltip_text = _("Reset to Demo"),
-            valign = Gtk.Align.CENTER,
-        };
-        server_reset_button.add_css_class ("flat");
-
-        var server_entry = new Adw.EntryRow () {
-            activates_default = true,
-            input_purpose = Gtk.InputPurpose.URL,
-            show_apply_button = true,
-            text = current_server,
-            title = _("Server URL"),
-        };
-        server_entry.add_suffix (server_reset_button);
-
-        var server_group = new Adw.PreferencesGroup () {
-            title = _("Server"),
-            description = _("Enter the full URL including any custom port"),
-        };
-        server_group.add (server_entry);
-
-        color_light_button = new Gtk.ColorDialogButton (new Gtk.ColorDialog ()) {
-            rgba = current_rgba_light,
-            valign = Gtk.Align.CENTER,
-        };
-
-        var color_light_row = new Adw.ActionRow () {
-            title = _("Light"),
-            subtitle = _("Used with default system style preference"),
-            activatable_widget = color_light_button,
-        };
-        color_light_row.add_suffix (color_light_button);
-
-        color_dark_button = new Gtk.ColorDialogButton (new Gtk.ColorDialog ()) {
-            rgba = current_rgba_dark,
-            valign = Gtk.Align.CENTER,
-        };
-
-        var color_dark_row = new Adw.ActionRow () {
-            title = _("Dark"),
-            subtitle = _("Used with dark system style preference"),
-            activatable_widget = color_dark_button,
-        };
-        color_dark_row.add_suffix (color_dark_button);
-
-        var color_reset_button = new Gtk.Button.from_icon_name ("step-back-symbolic") {
-            tooltip_text = _("Reset to Default"),
-            valign = Gtk.Align.CENTER,
-        };
-        color_reset_button.add_css_class ("flat");
-
-        var color_group = new Adw.PreferencesGroup () {
-            title = _("Header Colors"),
-            description = _("Better match your dashboard"),
-        };
-        color_group.add (color_light_row);
-        color_group.add (color_dark_row);
-        color_group.set_header_suffix (color_reset_button);
-
-        var settings_page = new Adw.PreferencesPage ();
-        settings_page.add (server_group);
-        settings_page.add (color_group);
-
-        var settings_dialog = new Adw.PreferencesDialog () {
-            content_width = 480,
-            title = _("Settings"),
-        };
-        settings_dialog.add (settings_page);
-
-        settings_dialog.present (this);
-
-        server_entry.apply.connect (() => {
-            string new_server = server_entry.text.strip ();
-
-            if (new_server == "") {
-                new_server = default_server;
-            }
-
-            if (!new_server.contains ("://")) {
-                new_server = "http://" + new_server;
-            }
-
-            if (new_server != current_server) {
-                // FIXME: There's currently no validation of this
-                App.settings.set_string ("server", new_server);
-                log_out ();
-            }
-        });
-
-        server_reset_button.clicked.connect (() => {
-            server_entry.text = default_server;
-            server_entry.apply ();
-        });
-
-        color_reset_button.clicked.connect (() => {
-            string light, dark;
-
-            App.settings.reset ("headerbar-colors");
-            App.settings.get ("headerbar-colors", "(ss)", out light, out dark);
-
-            var light_rgba = Gdk.RGBA ();
-            light_rgba.parse (light);
-
-            var dark_rgba = Gdk.RGBA ();
-            dark_rgba.parse (dark);
-
-            color_light_button.rgba = light_rgba;
-            color_dark_button.rgba = dark_rgba;
-        });
-
-        color_light_button.notify["rgba"].connect (on_color_button_change);
-        color_dark_button.notify["rgba"].connect (on_color_button_change);
+    private void on_reload_activate () {
+        web_view.reload ();
     }
 
-    private void on_color_button_change () {
-        string light = color_light_button.get_rgba ().to_string ();
-        string dark = color_dark_button.get_rgba ().to_string ();
-
-        App.settings.set (
-            "headerbar-colors", "(ss)", light, dark
-        );
-
-        update_headerbar_colors (light, dark);
+    private void on_settings_activate () {
+        var settings_dialog = new Butler.SettingsDialog ();
+        settings_dialog.server_changed.connect (log_out);
+        settings_dialog.colors_changed.connect (update_headerbar_colors);
+        settings_dialog.present (this);
     }
 
     private void on_log_out_activate () {

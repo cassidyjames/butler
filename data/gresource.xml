@@ -2,10 +2,10 @@
 <gresources>
   <gresource prefix="/com/cassidyjames/butler/">
     <file preprocess="xml-stripblanks" compressed="true">metainfo.xml.in</file>
+    <file preprocess="xml-stripblanks" compressed="true">ui/main-window.ui</file>
+    <file preprocess="xml-stripblanks" compressed="true">ui/settings-dialog.ui</file>
     <file>style.css</file>
-    <file>style-dark.css</file>
     <file alias="Devel/style.css">style.css</file>
-    <file alias="Devel/style-dark.css">style-dark.css</file>
     <file alias="icons/scalable/actions/step-back-symbolic.svg" preprocess="xml-stripblanks">icons/step-back-symbolic.svg</file>
     <file alias="Devel/icons/scalable/actions/step-back-symbolic.svg" preprocess="xml-stripblanks">icons/step-back-symbolic.svg</file>
   </gresource>

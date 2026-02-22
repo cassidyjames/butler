@@ -53,24 +53,53 @@
 
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/cassidyjames/butler/939d5d9daaf819b937495c6ab2f3ddcff3bef8c2/data/screenshots/light.png</image>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/8bab9d361e7924cd0f2fdbf214a6e1a3e846fdec/data/screenshots/light.png</image>
       <caption>Home Assistant dashboard with many rooms and devices</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/cassidyjames/butler/939d5d9daaf819b937495c6ab2f3ddcff3bef8c2/data/screenshots/light-settings.png</image>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/8bab9d361e7924cd0f2fdbf214a6e1a3e846fdec/data/screenshots/light-settings.png</image>
       <caption>Available settings, including server URL and custom header colors</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/cassidyjames/butler/939d5d9daaf819b937495c6ab2f3ddcff3bef8c2/data/screenshots/dark.png</image>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/8bab9d361e7924cd0f2fdbf214a6e1a3e846fdec/data/screenshots/dark.png</image>
       <caption>Home Assistant dashboard in dark style</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/cassidyjames/butler/939d5d9daaf819b937495c6ab2f3ddcff3bef8c2/data/screenshots/dark-settings.png</image>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/8bab9d361e7924cd0f2fdbf214a6e1a3e846fdec/data/screenshots/dark-settings.png</image>
+      <caption>Available settings in dark style</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/8bab9d361e7924cd0f2fdbf214a6e1a3e846fdec/data/screenshots/light-mobile.png</image>
+      <caption>Home Assistant dashboard with many rooms and devices</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/8bab9d361e7924cd0f2fdbf214a6e1a3e846fdec/data/screenshots/light-mobile-settings.png</image>
+      <caption>Available settings, including server URL and custom header colors</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/8bab9d361e7924cd0f2fdbf214a6e1a3e846fdec/data/screenshots/dark-mobile.png</image>
+      <caption>Home Assistant dashboard in dark style</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/cassidyjames/butler/8bab9d361e7924cd0f2fdbf214a6e1a3e846fdec/data/screenshots/dark-mobile-settings.png</image>
       <caption>Available settings in dark style</caption>
     </screenshot>
   </screenshots>
 
   <releases>
+    <release version="1.5.0" date="2026-02-21">
+      <description>
+        <p>Expressive refresh</p>
+        <ul>
+          <li>Completely reworked adaptive UI coloring behind “expressive” preference</li>
+          <li>Thinner titlebar style for less wasted space</li>
+          <li>New “reload” menu item for those times your dashboard isn’t cooperating</li>
+          <li>Prettier error handling with relevant next steps</li>
+          <li>Updated the default header colors to the latest Home Assistant theme</li>
+          <li>Under-the-hood refactoring for improved performance and maintainability</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.4.0" date="2025-10-04">
       <description>
         <p>GNOME 49 “Brescia”</p>

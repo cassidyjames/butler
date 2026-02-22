@@ -4,13 +4,42 @@
 
   --headerbar-border-color: var(--headerbar-fg-color);
   --headerbar-backdrop-color: var(--headerbar-bg-color);
+  --headerbar-shade-color: color-mix(in oklab, var(--headerbar-bg-color), var(--headerbar-fg-color) 12.5%);
+}
 
-  --accent-bg-color: var(--headerbar-bg-color);
-  --accent-color: oklab(from var(--accent-bg-color) var(--standalone-color-oklab));
+@media (prefers-color-scheme: dark) {
+  :root {
+    --headerbar-bg-color: var(--headerbar-bg-dark);
+    --headerbar-fg-color: var(--headerbar-fg-dark);
+  }
+}
+
+#main-headerbar,
+#main-headerbar > * > * {
+  padding-top: 0;
+  padding-bottom: 0;
+  min-height: 32px;
+}
+
+#main-headerbar windowhandle > box {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.expressive {
+  --accent-bg-color: color-mix(in oklab, var(--headerbar-bg-color), var(--headerbar-fg-color) 5%);
   --accent-fg-color: var(--headerbar-fg-color);
+  --accent-color: var(--accent-fg-color);
 
-  --window-bg-color: color-mix(in oklab, var(--accent-color), var(--view-bg-color) 90%);
-  --window-fg-color: color-mix(in oklab, var(--accent-color), var(--view-fg-color) 50%);
+  --window-bg-color: var(--headerbar-bg-color);
+  --window-fg-color: var(--headerbar-fg-color);
   --popover-bg-color: var(--window-bg-color);
   --popover-fg-color: var(--window-fg-color);
+
+  --view-bg-color: color-mix(in oklab, var(--headerbar-bg-color), white 20%);
+  --view-fg-color: var(--headerbar-fg-color);
+  --card-bg-color: var(--view-bg-color);
+  --card-fg-color: var(--view-fg-color);
+
+  --card-shade-color: color-mix(in oklab, var(--card-bg-color), black 15%);
 }

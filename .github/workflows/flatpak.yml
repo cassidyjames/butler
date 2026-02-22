@@ -10,19 +10,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  flatpak-devel:
-    name: Flatpak (Devel)
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-49
-      options: --privileged
-    steps:
-    - uses: actions/checkout@v4
-    - uses: flatpak/flatpak-github-actions/flatpak-builder@v6.6
-      with:
-        bundle: com.cassidyjames.butler.Devel.flatpak
-        manifest-path: com.cassidyjames.butler.Devel.json
-        cache-key: "flatpak-builder-${{ github.sha }}"
+  # flatpak-devel:
+  #   name: Flatpak (Devel)
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-49
+  #     options: --privileged
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - uses: flatpak/flatpak-github-actions/flatpak-builder@v6.6
+  #     with:
+  #       bundle: com.cassidyjames.butler.Devel.flatpak
+  #       manifest-path: com.cassidyjames.butler.Devel.json
+  #       cache-key: "flatpak-builder-${{ github.sha }}"
   flatpak-release:
     name: Flatpak (Release)
     runs-on: ubuntu-latest

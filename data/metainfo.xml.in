@@ -93,6 +93,7 @@
         <ul>
           <li>Files can now be downloaded!</li>
           <li>New zoom item in menu</li>
+          <li>Warning when the server doesn’t look like Home Assistant</li>
           <li>Fixed how server URLs are saved and restored at startup</li>
           <li>Attempt to fix a crash on older hardware by no longer forcing hardware acceleration</li>
         </ul>
@@ -100,6 +101,7 @@
       <issues>
         <issue url="https://github.com/cassidyjames/butler/issues/65">Allow saving/downloading files</issue>
         <issue url="https://github.com/cassidyjames/butler/issues/52">Add zoom to menu</issue>
+        <issue url="https://github.com/cassidyjames/butler/issues/76">Possible to set non-HA URLs as server URL</issue>
         <issue url="https://github.com/cassidyjames/butler/issues/56">URL confusion when using a wrong URL for a server</issue>
         <issue url="https://github.com/cassidyjames/butler/issues/66">App crash - jump to invalid address</issue>
       </issues>

@@ -25,6 +25,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     [GtkChild] private unowned Gtk.Button home_button;
     [GtkChild] private unowned Adw.Toast fullscreen_toast;
     [GtkChild] private unowned Adw.ToastOverlay toast_overlay;
+    [GtkChild] private unowned Gtk.Button open_button;
     [GtkChild] private unowned Adw.Banner demo_banner;
     [GtkChild] private unowned Gtk.Stack stack;
     [GtkChild] private unowned Adw.StatusPage loading_page;
@@ -80,8 +81,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         loading_page.title = APP_NAME;
         loading_page.description = _("Loading the dashboard…");
         loading_page.icon_name = APP_ID;
-
-        error_page.icon_name = APP_ID;
 
         about_dialog = new Adw.AboutDialog.from_appdata (
             "/com/cassidyjames/butler/metainfo.xml.in", VERSION
@@ -258,7 +257,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         set_default_size (window_width, window_height);
 
         home_button.clicked.connect (() => {
-            web_view.load_uri (server);
+            web_view.load_uri (App.settings.get_string ("server"));
         });
 
         close_request.connect (() => {
@@ -267,7 +266,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         });
         notify["fullscreened"].connect (save_window_state);
         notify["maximized"].connect (save_window_state);
-
 
         web_view.load_failed.connect ((load_event, failing_uri, error) => {
             last_failed_uri = failing_uri;
@@ -281,6 +279,10 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             if (last_failed_uri != null) {
                 web_view.load_uri (last_failed_uri);
             }
+        });
+
+        open_button.clicked.connect (() => {
+            new Gtk.UriLauncher (web_view.uri).launch.begin (this, null);
         });
 
         web_view.load_changed.connect (on_loading);
@@ -335,7 +337,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     private void on_loading (WebKit.LoadEvent load_event) {
         if (load_event == WebKit.LoadEvent.STARTED) {
             last_failed_uri = null;
-            if (stack.visible_child_name == "error") {
+            if (stack.visible_child_name == "error" || stack.visible_child_name == "not-ha") {
                 stack.visible_child_name = "loading";
             }
             return;
@@ -351,6 +353,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         }
 
         stack.visible_child_name = "web";
+        home_revealer.reveal_child = false;
 
         string default_server = App.settings.get_default_value ("server").get_string ();
         string server = App.settings.get_string ("server");
@@ -366,8 +369,27 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             // Somehow you got away from the server without opening a link in
             // the browser…
             demo_banner.revealed = false;
-            home_revealer.set_reveal_child (true);
+            home_revealer.reveal_child = true;
         }
+
+        if (current_url.has_prefix (default_server)) {
+            return;
+        }
+
+        web_view.evaluate_javascript.begin (
+            "document.querySelector('home-assistant, ha-authorize') !== null",
+            -1, null, null, null,
+            (obj, res) => {
+                try {
+                    var js_result = web_view.evaluate_javascript.end (res);
+                    if (!js_result.to_boolean ()) {
+                        stack.visible_child_name = "not-ha";
+                    }
+                } catch (Error e) {
+                    // Ignore JS errors; leave page visible
+                }
+            }
+        );
     }
 
     public void zoom_in () {

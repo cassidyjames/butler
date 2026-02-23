@@ -229,7 +229,8 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
                         _("Downloaded “%s”").printf (file.get_basename ())
                     ) {
                         button_label = _("Open"),
-                        action_name = "win.open_file"
+                        action_name = "win.open_file",
+                        timeout = 0
                     };
                     complete_toast.set_action_target ("s", file.get_uri ());
                     toast_overlay.add_toast (complete_toast);
@@ -429,7 +430,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
     private void on_open_file_activate (SimpleAction action, Variant? parameter) {
         if (parameter != null) {
-            new Gtk.UriLauncher (parameter.get_string ()).launch.begin (null, null);
+            new Gtk.FileLauncher (File.new_for_uri (parameter.get_string ())).launch.begin (this, null);
         }
     }
 

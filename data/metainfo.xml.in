@@ -91,13 +91,15 @@
       <description>
         <p>Quality of life improvements</p>
         <ul>
-          <li>Files can now be downloaded from your Home Assistant dashboard</li>
+          <li>Files can now be downloaded!</li>
           <li>New zoom item in menu</li>
+          <li>Attempt to fix a crash on older hardware by no longer forcing hardware acceleration</li>
         </ul>
       </description>
       <issues>
         <issue url="https://github.com/cassidyjames/butler/issues/65">Allow saving/downloading files</issue>
         <issue url="https://github.com/cassidyjames/butler/issues/52">Add zoom to menu</issue>
+        <issue url="https://github.com/cassidyjames/butler/issues/66">App crash - jump to invalid address</issue>
       </issues>
     </release>
     <release version="1.5.0" date="2026-02-21">

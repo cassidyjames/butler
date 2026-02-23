@@ -6,6 +6,8 @@
 public class Butler.WebView : WebKit.WebView {
     private bool is_terminal = false;
 
+    public signal void download_started (WebKit.Download download, string filename);
+
     public WebView () {
         Object (
             hexpand: true,
@@ -58,8 +60,41 @@ public class Butler.WebView : WebKit.WebView {
                     ((WebKit.NavigationPolicyDecision)decision).
                     navigation_action.get_request ().get_uri ()
                 ).launch.begin (null, null);
+            } else if (type == WebKit.PolicyDecisionType.RESPONSE) {
+                var response_decision = (WebKit.ResponsePolicyDecision) decision;
+                if (!response_decision.is_mime_type_supported ()) {
+                    response_decision.download ();
+                    return true;
+                }
             }
             return false;
+        });
+
+        network_session.download_started.connect ((dl) => {
+            dl.decide_destination.connect ((suggested_filename) => {
+                var downloads_dir = Environment.get_user_special_dir (UserDirectory.DOWNLOAD);
+                DirUtils.create_with_parents (downloads_dir, 0755);
+
+                var path = Path.build_filename (downloads_dir, suggested_filename);
+                var file = File.new_for_path (path);
+                var i = 1;
+                while (file.query_exists ()) {
+                    var dot = suggested_filename.last_index_of (".");
+                    string new_name;
+                    if (dot > 0) {
+                        new_name = suggested_filename[0:dot] + " (%d)".printf (i) + suggested_filename[dot:];
+                    } else {
+                        new_name = suggested_filename + " (%d)".printf (i);
+                    }
+                    path = Path.build_filename (downloads_dir, new_name);
+                    file = File.new_for_path (path);
+                    i++;
+                }
+
+                dl.set_destination (file.get_path ());
+                this.download_started (dl, file.get_basename ());
+                return true;
+            });
         });
 
         var back_click_gesture = new Gtk.GestureClick () {

@@ -17,6 +17,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         { "settings", on_settings_activate },
         { "log_out", on_log_out_activate },
         { "about", on_about_activate },
+        { "open_file", on_open_file_activate, "s" },
     };
 
     [GtkChild] private unowned Gtk.Revealer header_revealer;
@@ -31,10 +32,13 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     [GtkChild] private unowned Gtk.Button error_retry_button;
 
     [GtkChild] private unowned Gtk.Label zoom_label;
+    [GtkChild] private unowned Gtk.MenuButton download_button;
 
     private Adw.AboutDialog about_dialog;
     private Butler.WebView web_view;
+    private Gtk.Box downloads_box;
     private string? last_failed_uri = null;
+    private int active_downloads = 0;
 
     private const string CSS = """
         :root {
@@ -93,7 +97,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         };
         about_dialog.application_icon = APP_ID;
         about_dialog.application_name = APP_NAME;
-        about_dialog.copyright = "© 2020–2024 %s".printf (
+        about_dialog.copyright = "© 2020–2026 %s".printf (
             about_dialog.developer_name
         );
         about_dialog.add_link (_("About Home Assistant"), "https://www.home-assistant.io/");
@@ -115,12 +119,140 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             zoom_label.label = zoom_label_text ();
         });
 
+        downloads_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 12) {
+            margin_top = 6,
+            margin_bottom = 6,
+            margin_start = 6,
+            width_request = 250,
+        };
+        (download_button.popover).child = downloads_box;
+
+        web_view.download_started.connect ((download, filename) => {
+            active_downloads++;
+            download_button.visible = true;
+
+            var name_label = new Gtk.Label (filename) {
+                halign = Gtk.Align.START,
+                hexpand = true,
+                ellipsize = Pango.EllipsizeMode.MIDDLE,
+                max_width_chars = 30,
+            };
+
+            var progress_bar = new Gtk.ProgressBar ();
+
+            var size_label = new Gtk.Label ("") {
+                halign = Gtk.Align.START,
+            };
+            size_label.add_css_class ("dimmed");
+            size_label.add_css_class ("numeric");
+
+            var download_info = new Gtk.Box (Gtk.Orientation.VERTICAL, 4);
+            download_info.append (name_label);
+            download_info.append (progress_bar);
+            download_info.append (size_label);
+
+            var cancel_button = new Gtk.Button.from_icon_name ("process-stop-symbolic") {
+                tooltip_text = _("Cancel"),
+                valign = Gtk.Align.CENTER,
+            };
+            cancel_button.add_css_class ("flat");
+            cancel_button.add_css_class ("circular");
+            cancel_button.clicked.connect (download.cancel);
+
+            var download_row = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 4);
+            download_row.append (download_info);
+            download_row.append (cancel_button);
+
+            downloads_box.append (download_row);
+
+            uint64 bytes_received = 0;
+            var failed = false;
+
+            uint pulse_timer_id = Timeout.add (100, () => {
+                progress_bar.pulse ();
+                return Source.CONTINUE;
+            });
+
+            download.received_data.connect ((chunk_length) => {
+                bytes_received += chunk_length;
+                uint64 total = download.response.content_length;
+                if (total > 0) {
+                    if (pulse_timer_id > 0) {
+                        Source.remove (pulse_timer_id);
+                        pulse_timer_id = 0;
+                    }
+                    progress_bar.fraction = (double) bytes_received / (double) total;
+                    size_label.label = "%s / %s".printf (
+                        GLib.format_size (bytes_received),
+                        GLib.format_size (total)
+                    );
+                } else {
+                    size_label.label = GLib.format_size (bytes_received);
+                }
+            });
+
+            download.failed.connect ((error) => {
+                failed = true;
+                if (pulse_timer_id > 0) {
+                    Source.remove (pulse_timer_id);
+                    pulse_timer_id = 0;
+                }
+
+                active_downloads--;
+                downloads_box.remove (download_row);
+
+                if (active_downloads == 0) {
+                    download_button.visible = false;
+                }
+            });
+
+            download.finished.connect (() => {
+                if (failed) {
+                    return;
+                }
+
+                if (pulse_timer_id > 0) {
+                    Source.remove (pulse_timer_id);
+                    pulse_timer_id = 0;
+                }
+
+                active_downloads--;
+                downloads_box.remove (download_row);
+
+                if (active_downloads == 0) {
+                    download_button.visible = false;
+                }
+
+                if (!failed) {
+                    var file = File.new_for_path (download.get_destination ());
+                    var complete_toast = new Adw.Toast (
+                        _("Downloaded “%s”").printf (file.get_basename ())
+                    ) {
+                        button_label = _("Open"),
+                        action_name = "win.open_file"
+                    };
+                    complete_toast.set_action_target ("s", file.get_uri ());
+                    toast_overlay.add_toast (complete_toast);
+                }
+            });
+        });
+
         string headerbar_color_light, headerbar_color_dark;
-        App.settings.get ("headerbar-colors", "(ss)", out headerbar_color_light, out headerbar_color_dark);
+        App.settings.get (
+            "headerbar-colors",
+            "(ss)",
+            out headerbar_color_light,
+            out headerbar_color_dark
+        );
         update_headerbar_colors (headerbar_color_light, headerbar_color_dark);
 
         int window_width, window_height;
-        App.settings.get ("window-size", "(ii)", out window_width, out window_height);
+        App.settings.get (
+            "window-size",
+            "(ii)",
+            out window_width,
+            out window_height
+        );
 
         set_default_size (window_width, window_height);
 
@@ -293,6 +425,12 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
     private void on_reload_activate () {
         web_view.reload ();
+    }
+
+    private void on_open_file_activate (SimpleAction action, Variant? parameter) {
+        if (parameter != null) {
+            new Gtk.UriLauncher (parameter.get_string ()).launch.begin (null, null);
+        }
     }
 
     private void on_settings_activate () {

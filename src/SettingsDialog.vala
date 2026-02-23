@@ -44,8 +44,8 @@ public class Butler.SettingsDialog : Adw.PreferencesDialog {
             }
 
             if (new_server != current_server) {
-                // FIXME: There's currently no validation of this
                 App.settings.set_string ("server", new_server);
+                App.settings.set_string ("current-url", new_server);
                 server_changed ();
             }
         });

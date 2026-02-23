@@ -40,6 +40,7 @@ template $ButlerMainWindow : Adw.ApplicationWindow {
         name: "main-headerbar";
         [start]
         Gtk.Revealer home_revealer {
+          reveal-child: false;
           transition-type: slide_right;
 
           Gtk.Button home_button {
@@ -133,6 +134,43 @@ template $ButlerMainWindow : Adw.ApplicationWindow {
 
               Gtk.Button error_retry_button {
                 label: _("_Retry");
+                use-underline: true;
+
+                styles [
+                  "pill",
+                  "suggested-action",
+                ]
+              }
+
+              Gtk.Button {
+                label: _("Change _Server…");
+                use-underline: true;
+                action-name: "win.settings";
+
+                styles [
+                  "pill",
+                  "flat",
+                ]
+              }
+            };
+          };
+        }
+
+        Gtk.StackPage {
+          name: "not-ha";
+
+          child: Adw.StatusPage not_ha_page {
+            icon-name: "dialog-warning-symbolic";
+            title: _("Butler is for Home Assistant");
+            description: _("This doesn’t look like a Home Assistant server. Double-check the server URL in Settings, or try opening this page in a web browser.");
+
+            child: Gtk.Box {
+              orientation: vertical;
+              spacing: 12;
+              halign: center;
+
+              Gtk.Button open_button {
+                label: _("_Open in Web Browser…");
                 use-underline: true;
 
                 styles [

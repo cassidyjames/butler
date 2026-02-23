@@ -87,10 +87,18 @@
   </screenshots>
 
   <releases>
-    <release version="1.6.0" date="2026-02-22">
+    <release version="1.6.0" date="2026-02-23">
       <description>
-        <p>New zoom item in menu</p>
+        <p>Quality of life improvements</p>
+        <ul>
+          <li>Files can now be downloaded from your Home Assistant dashboard</li>
+          <li>New zoom item in menu</li>
+        </ul>
       </description>
+      <issues>
+        <issue url="https://github.com/cassidyjames/butler/issues/65">Allow saving/downloading files</issue>
+        <issue url="https://github.com/cassidyjames/butler/issues/52">Add zoom to menu</issue>
+      </issues>
     </release>
     <release version="1.5.0" date="2026-02-21">
       <description>
@@ -104,6 +112,9 @@
           <li>Under-the-hood refactoring for improved performance and maintainability</li>
         </ul>
       </description>
+      <issues>
+        <issue url="https://github.com/cassidyjames/butler/issues/68">Butler loses connection on resume from suspend</issue>
+      </issues>
     </release>
     <release version="1.4.0" date="2025-10-04">
       <description>
@@ -115,6 +126,9 @@
           <li>Removed Ctrl+F from fullscreen shortcuts since it conflicts with Find</li>
         </ul>
       </description>
+      <issues>
+        <issue url="https://github.com/cassidyjames/butler/issues/61">Remap ctrl-f full screen shortcut key</issue>
+      </issues>
     </release>
     <release version="1.3.0" date="2024-09-18">
       <description>
@@ -139,6 +153,9 @@
           <li>Separate development and release profiles to make development easier</li>
         </ul>
       </description>
+      <issues>
+        <issue url="https://github.com/cassidyjames/butler/issues/40">Regarding header bar in dark mode</issue>
+      </issues>
     </release>
     <release version="1.1.3" date="2024-04-23">
       <description>
@@ -172,6 +189,9 @@
           <li>Brand colors for Flathub and app store clients</li>
         </ul>
       </description>
+      <issues>
+        <issue url="https://github.com/cassidyjames/butler/issues/20">Icon lacks contrast (too dark)</issue>
+      </issues>
     </release>
     <release version="1.0.3" date="2024-01-06">
       <description>

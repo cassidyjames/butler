@@ -27,8 +27,7 @@ public class Butler.WebView : WebKit.WebView {
             enable_html5_local_storage = true,
             enable_smooth_scrolling = true,
             enable_webgl = true,
-            enable_webrtc = true,
-            hardware_acceleration_policy = WebKit.HardwareAccelerationPolicy.ALWAYS
+            enable_webrtc = true
         };
 
         settings = webkit_settings;

@@ -268,16 +268,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         notify["fullscreened"].connect (save_window_state);
         notify["maximized"].connect (save_window_state);
 
-        web_view.load_changed.connect ((load_event) => {
-            if (load_event == WebKit.LoadEvent.STARTED) {
-                last_failed_uri = null;
-                if (stack.visible_child_name == "error") {
-                    stack.visible_child_name = "loading";
-                }
-            } else if (load_event == WebKit.LoadEvent.FINISHED && last_failed_uri == null) {
-                stack.visible_child_name = "web";
-            }
-        });
 
         web_view.load_failed.connect ((load_event, failing_uri, error) => {
             last_failed_uri = failing_uri;
@@ -294,9 +284,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         });
 
         web_view.load_changed.connect (on_loading);
-        web_view.notify["uri"].connect (on_loading);
-        web_view.notify["estimated-load-progress"].connect (on_loading);
-        web_view.notify["is-loading"].connect (on_loading);
 
         App.settings.bind ("zoom", web_view, "zoom-level", SettingsBindFlags.DEFAULT);
     }
@@ -345,28 +332,41 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         }
     }
 
-    private void on_loading () {
-        if (web_view.is_loading) {
-            // TODO: Add a loading progress bar or spinner somewhere?
-        } else if (last_failed_uri != null) {
+    private void on_loading (WebKit.LoadEvent load_event) {
+        if (load_event == WebKit.LoadEvent.STARTED) {
+            last_failed_uri = null;
+            if (stack.visible_child_name == "error") {
+                stack.visible_child_name = "loading";
+            }
+            return;
+        }
+
+        if (load_event != WebKit.LoadEvent.FINISHED) {
+            return;
+        }
+
+        if (last_failed_uri != null) {
+            demo_banner.revealed = false;
+            return;
+        }
+
+        stack.visible_child_name = "web";
+
+        string default_server = App.settings.get_default_value ("server").get_string ();
+        string server = App.settings.get_string ("server");
+        string current_url = web_view.uri;
+
+        App.settings.set_string ("current-url", current_url);
+
+        if (current_url.has_prefix (default_server)) {
+            demo_banner.revealed = true;
+        } else if (current_url.has_prefix (server)) {
             demo_banner.revealed = false;
         } else {
-            string default_server = App.settings.get_default_value ("server").get_string ();
-            string server = App.settings.get_string ("server");
-            string current_url = web_view.uri;
-
-            App.settings.set_string ("current-url", current_url);
-
-            if (current_url.has_prefix (default_server)) {
-                demo_banner.revealed = true;
-            } else if (current_url.has_prefix (server)) {
-                demo_banner.revealed = false;
-            } else {
-                // Somehow you got away from the server without opening a link
-                // in the browser…
-                demo_banner.revealed = false;
-                home_revealer.set_reveal_child (true);
-            }
+            // Somehow you got away from the server without opening a link
+            // in the browser…
+            demo_banner.revealed = false;
+            home_revealer.set_reveal_child (true);
         }
     }
 
@@ -436,7 +436,9 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
     private void on_settings_activate () {
         var settings_dialog = new Butler.SettingsDialog ();
-        settings_dialog.server_changed.connect (log_out);
+        settings_dialog.server_changed.connect (() => {
+            web_view.load_uri (App.settings.get_string ("server"));
+        });
         settings_dialog.colors_changed.connect (update_headerbar_colors);
         settings_dialog.present (this);
     }
@@ -446,7 +448,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         var log_out_dialog = new Adw.AlertDialog (
             _("Log out of Home Assistant?"),
-            _("You will need to re-enter any username and password required to log back in to <b>%s</b>.").printf (server)
+            _("You will need to log back in to <b>%s</b> or any previously-used servers.").printf (server)
         ) {
             body_use_markup = true,
             default_response = "log_out",

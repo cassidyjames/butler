@@ -363,15 +363,15 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         } else if (current_url.has_prefix (server)) {
             demo_banner.revealed = false;
         } else {
-            // Somehow you got away from the server without opening a link
-            // in the browser…
+            // Somehow you got away from the server without opening a link in
+            // the browser…
             demo_banner.revealed = false;
             home_revealer.set_reveal_child (true);
         }
     }
 
     public void zoom_in () {
-        if (web_view.zoom_level < 5.0) {
+        if (web_view.zoom_level < 4.9) {
             web_view.zoom_level = web_view.zoom_level + 0.1;
         } else {
             Gdk.Display.get_default ().beep ();
@@ -382,7 +382,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     }
 
     public void zoom_out () {
-        if (web_view.zoom_level > 0.2) {
+        if (web_view.zoom_level > 0.3) {
             web_view.zoom_level = web_view.zoom_level - 0.1;
         } else {
             Gdk.Display.get_default ().beep ();

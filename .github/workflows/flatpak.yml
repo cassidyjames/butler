@@ -28,7 +28,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: flatpak/flatpak-github-actions/flatpak-builder@v6.6
       with:
-        bundle: butler-${{ matrix.arch }}.flatpak
+        bundle: butler.flatpak
         manifest-path: com.cassidyjames.butler.json
         cache-key: "flatpak-builder-${{ github.sha }}-${{ matrix.arch }}"
         arch: ${{ matrix.arch }}

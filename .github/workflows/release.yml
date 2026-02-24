@@ -42,12 +42,15 @@ jobs:
     steps:
     - uses: actions/download-artifact@v4
       with:
-        pattern: com.cassidyjames.butler*.flatpak
-        merge-multiple: true
-    - name: Upload Flatpak to release
+        name: com.cassidyjames.butler-x86_64.flatpak
+    - uses: actions/download-artifact@v4
+      with:
+        name: com.cassidyjames.butler-aarch64.flatpak
+    - name: Upload Flatpaks to release
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         gh release upload ${{ github.event.release.tag_name }} \
-          com.cassidyjames.butler*.flatpak \
+          com.cassidyjames.butler-x86_64.flatpak \
+          com.cassidyjames.butler-aarch64.flatpak \
           --repo ${{ github.repository }}

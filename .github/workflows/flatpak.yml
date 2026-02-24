@@ -24,15 +24,24 @@ jobs:
   #       manifest-path: com.cassidyjames.butler.Devel.json
   #       cache-key: "flatpak-builder-${{ github.sha }}"
   flatpak-release:
-    name: Flatpak (Release)
-    runs-on: ubuntu-latest
+    name: Flatpak (Release, ${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-49
       options: --privileged
+    strategy:
+      matrix:
+        include:
+        - arch: x86_64
+          runner: ubuntu-latest
+        - arch: aarch64
+          runner: ubuntu-24.04-arm
+      fail-fast: false
     steps:
     - uses: actions/checkout@v4
     - uses: flatpak/flatpak-github-actions/flatpak-builder@v6.6
       with:
-        bundle: com.cassidyjames.butler.flatpak
+        bundle: butler-${{ matrix.arch }}.flatpak
         manifest-path: com.cassidyjames.butler.json
-        cache-key: "flatpak-builder-${{ github.sha }}"
+        cache-key: "flatpak-builder-${{ github.sha }}-${{ matrix.arch }}"
+        arch: ${{ matrix.arch }}

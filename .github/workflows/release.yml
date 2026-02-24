@@ -35,17 +35,26 @@ jobs:
     permissions:
       contents: write
     steps:
-    - uses: actions/download-artifact@v7
-      with:
-        name: com.cassidyjames.butler-x86_64.flatpak
-    - uses: actions/download-artifact@v7
+    - name: Download Flatpak bundle (aarch64)
+      uses: actions/download-artifact@v7
       with:
         name: com.cassidyjames.butler-aarch64.flatpak
-    - name: Upload Flatpaks to release
+
+    - name: Upload Flatpak to release (aarch64)
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release upload ${{ github.event.release.tag_name }} \
-          com.cassidyjames.butler-x86_64.flatpak \
-          com.cassidyjames.butler-aarch64.flatpak \
-          --repo ${{ github.repository }}
+        mv com.cassidyjames.butler.flatpak 'com.cassidyjames.butler-${{ github.event.release.tag_name }}-aarch64.flatpak'
+        gh release upload ${{ github.event.release.tag_name }} com.cassidyjames.butler-${{ github.event.release.tag_name }}-aarch64.flatpak --repo ${{ github.repository }}
+
+    - name: Download Flatpak bundle (x86_64)
+      uses: actions/download-artifact@v7
+      with:
+        name: com.cassidyjames.butler-x86_64.flatpak
+
+    - name: Upload Flatpak to release (x86_64)
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        mv com.cassidyjames.butler.flatpak 'com.cassidyjames.butler-${{ github.event.release.tag_name }}-x86_64.flatpak'
+        gh release upload ${{ github.event.release.tag_name }} com.cassidyjames.butler-${{ github.event.release.tag_name }}-x86_64.flatpak --repo ${{ github.repository }}

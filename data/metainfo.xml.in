@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2024–2025 Cassidy James Blaede <c@ssidyjam.es> -->
+<!-- Copyright 2024–2026 Cassidy James Blaede <c@ssidyjam.es> -->
 <component type="desktop">
   <id>@app_id@</id>
   <metadata_license>CC-BY-SA-4.0</metadata_license>
@@ -87,7 +87,7 @@
   </screenshots>
 
   <releases>
-    <release version="1.6.1" date="2026-02-23">
+    <release version="1.6.3" date="2026-02-23">
       <description>
         <p>Quality of life improvements</p>
         <ul>

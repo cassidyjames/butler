@@ -27,6 +27,11 @@ jobs:
         manifest-path: com.cassidyjames.butler.json
         cache-key: "flatpak-builder-${{ github.sha }}-${{ matrix.arch }}"
         arch: ${{ matrix.arch }}
+        upload-artifact: false
+    - uses: actions/upload-artifact@v4
+      with:
+        name: com.cassidyjames.butler-${{ matrix.arch }}.flatpak
+        path: com.cassidyjames.butler*.flatpak
 
   upload:
     name: Upload to Release

@@ -6,7 +6,7 @@ on:
 
 jobs:
   flatpak:
-    name: Flatpak (${{ matrix.arch }})
+    name: Flatpak (Release, ${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-49

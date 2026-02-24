@@ -1,16 +1,11 @@
-name: Flatpak
-on:
-  push:
-    branches:
-    - main
-  pull_request:
+name: Release
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+on:
+  release:
+    types: [published]
 
 jobs:
-  flatpak-release:
+  flatpak:
     name: Flatpak (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
     container:
@@ -32,3 +27,22 @@ jobs:
         manifest-path: com.cassidyjames.butler.json
         cache-key: "flatpak-builder-${{ github.sha }}-${{ matrix.arch }}"
         arch: ${{ matrix.arch }}
+
+  upload:
+    name: Upload to Release
+    runs-on: ubuntu-latest
+    needs: flatpak
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: butler-*.flatpak
+        merge-multiple: true
+    - name: Upload Flatpak to release
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release upload ${{ github.event.release.tag_name }} \
+          butler*.flatpak \
+          --repo ${{ github.repository }}

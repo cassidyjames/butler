@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   flatpak-release:
-    name: ${{ matrix.arch }}
+    name: Flatpak (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-49

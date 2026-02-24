@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   flatpak-release:
-    name: Flatpak (${{ matrix.arch }})
+    name: Flatpak (Devel, ${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-49
@@ -28,7 +28,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: flatpak/flatpak-github-actions/flatpak-builder@v6.6
       with:
-        bundle: butler.flatpak
-        manifest-path: com.cassidyjames.butler.json
+        bundle: com.cassidyjames.butler.Devel.flatpak
+        manifest-path: com.cassidyjames.butler.Devel.json
         cache-key: "flatpak-builder-${{ github.sha }}-${{ matrix.arch }}"
         arch: ${{ matrix.arch }}

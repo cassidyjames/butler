@@ -87,6 +87,11 @@
   </screenshots>
 
   <releases>
+    <release version="1.6.7" date="2026-04-20">
+      <description>
+        <p>Updated with the latest GNOME 50 platform</p>
+      </description>
+    </release>
     <release version="1.6.6" date="2026-02-23">
       <description>
         <p>Quality of life improvements</p>

@@ -14,13 +14,6 @@
   }
 }
 
-#main-headerbar .toggle {
-  border-radius: 100%;
-  margin: 5px;
-  min-height: 5px;
-  padding: 0;
-}
-
 #main-headerbar,
 #main-headerbar > * > * {
   padding-top: 0;

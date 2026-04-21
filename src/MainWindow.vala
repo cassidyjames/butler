@@ -49,8 +49,8 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     private const uint DURATION_MOUSE_HIDE = 500;
     private const uint DURATION_TOUCH_HIDE = 2000;
     private const double ZOOM_STEP = 0.1;
-    private const double ZOOM_MIN = 0.3;
-    private const double ZOOM_MAX = 4.9;
+    private const double ZOOM_MIN = 0.4;
+    private const double ZOOM_MAX = 3.0;
 
     private const string CSS = """
         :root {
@@ -469,21 +469,21 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     }
 
     private void zoom_in () {
-        if (web_view.zoom_level < ZOOM_MAX) {
-            web_view.zoom_level = web_view.zoom_level + ZOOM_STEP;
-        } else {
+        if (web_view.zoom_level >= ZOOM_MAX) {
             Gdk.Display.get_default ().beep ();
             warning ("Zoom already max");
+            return;
         }
+        web_view.zoom_level = double.min (web_view.zoom_level + ZOOM_STEP, ZOOM_MAX);
     }
 
     private void zoom_out () {
-        if (web_view.zoom_level > ZOOM_MIN) {
-            web_view.zoom_level = web_view.zoom_level - ZOOM_STEP;
-        } else {
+        if (web_view.zoom_level <= ZOOM_MIN) {
             Gdk.Display.get_default ().beep ();
             warning ("Zoom already min");
+            return;
         }
+        web_view.zoom_level = double.max (web_view.zoom_level - ZOOM_STEP, ZOOM_MIN);
     }
 
     private void zoom_default () {

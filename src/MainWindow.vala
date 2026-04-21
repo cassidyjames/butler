@@ -105,6 +105,35 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         // NOTE: cast to avoid trying to convert to Gtk.ShortcutController
         ((Gtk.Widget) this).add_controller (motion);
 
+        var touch_drag = new Gtk.GestureDrag () {
+            touch_only = true
+        };
+        touch_drag.drag_begin.connect ((x, y) => {
+            bool in_header_zone = y <= 8 ||
+                (header_revealer.child_revealed && y <= header_revealer.get_height ());
+            if (in_header_zone) {
+                if (hide_timeout_id != 0) {
+                    Source.remove (hide_timeout_id);
+                    hide_timeout_id = 0;
+                }
+                if (!mouse_at_top) {
+                    mouse_at_top = true;
+                    update_header_visibility ();
+                }
+            }
+        });
+        touch_drag.drag_end.connect ((x, y) => {
+            if (mouse_at_top && hide_timeout_id == 0) {
+                hide_timeout_id = Timeout.add (2000, () => {
+                    hide_timeout_id = 0;
+                    mouse_at_top = false;
+                    update_header_visibility ();
+                    return Source.REMOVE;
+                });
+            }
+        });
+        ((Gtk.Widget) this).add_controller (touch_drag);
+
         update_header_visibility ();
 
         loading_page.title = APP_NAME;

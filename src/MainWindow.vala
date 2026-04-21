@@ -87,60 +87,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         title = APP_NAME;
         icon_name = APP_ID;
 
-        var motion = new Gtk.EventControllerMotion ();
-        motion.motion.connect ((x, y) => {
-            bool in_header_zone = y <= DISTANCE_HEADER_REVEAL ||
-                (header_revealer.child_revealed && y <= header_revealer.get_height ());
-            if (in_header_zone) {
-                if (hide_timeout_id != 0) {
-                    Source.remove (hide_timeout_id);
-                    hide_timeout_id = 0;
-                }
-                if (!mouse_at_top) {
-                    mouse_at_top = true;
-                    update_header_visibility ();
-                }
-            } else if (mouse_at_top && hide_timeout_id == 0) {
-                hide_timeout_id = Timeout.add (DURATION_MOUSE_HIDE, () => {
-                    hide_timeout_id = 0;
-                    mouse_at_top = false;
-                    update_header_visibility ();
-                    return Source.REMOVE;
-                });
-            }
-        });
-        // NOTE: cast to avoid trying to convert to Gtk.ShortcutController
-        ((Gtk.Widget) this).add_controller (motion);
-
-        var touch_drag = new Gtk.GestureDrag () {
-            touch_only = true
-        };
-        touch_drag.drag_begin.connect ((x, y) => {
-            bool in_header_zone = y <= DISTANCE_HEADER_REVEAL ||
-                (header_revealer.child_revealed && y <= header_revealer.get_height ());
-            if (in_header_zone) {
-                if (hide_timeout_id != 0) {
-                    Source.remove (hide_timeout_id);
-                    hide_timeout_id = 0;
-                }
-                if (!mouse_at_top) {
-                    mouse_at_top = true;
-                    update_header_visibility ();
-                }
-            }
-        });
-        touch_drag.drag_end.connect ((x, y) => {
-            if (mouse_at_top && hide_timeout_id == 0) {
-                hide_timeout_id = Timeout.add (DURATION_TOUCH_HIDE, () => {
-                    hide_timeout_id = 0;
-                    mouse_at_top = false;
-                    update_header_visibility ();
-                    return Source.REMOVE;
-                });
-            }
-        });
-        ((Gtk.Widget) this).add_controller (touch_drag);
-
         update_header_visibility ();
 
         loading_page.title = APP_NAME;
@@ -178,10 +124,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         }
 
         stack.add_named (web_view, "web");
-
-        web_view.notify["zoom-level"].connect (() => {
-            zoom_label.label = zoom_label_text ();
-        });
 
         downloads_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 12) {
             margin_top = 6,
@@ -287,18 +229,16 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
                     download_button.visible = false;
                 }
 
-                if (!failed) {
-                    var file = File.new_for_path (download.get_destination ());
-                    var complete_toast = new Adw.Toast (
-                        _("Downloaded “%s”").printf (file.get_basename ())
-                    ) {
-                        button_label = _("Open"),
-                        action_name = "win.open_file",
-                        timeout = 0
-                    };
-                    complete_toast.set_action_target ("s", file.get_uri ());
-                    toast_overlay.add_toast (complete_toast);
-                }
+                var file = File.new_for_path (download.get_destination ());
+                var complete_toast = new Adw.Toast (
+                    _("Downloaded “%s”").printf (file.get_basename ())
+                ) {
+                    button_label = _("Open"),
+                    action_name = "win.open_file",
+                    timeout = 0
+                };
+                complete_toast.set_action_target ("s", file.get_uri ());
+                toast_overlay.add_toast (complete_toast);
             });
         });
 
@@ -325,6 +265,32 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         );
 
         set_default_size (window_width, window_height);
+
+        var event_controller_motion = new Gtk.EventControllerMotion ();
+        event_controller_motion.motion.connect ((x, y) => {
+            if (is_in_header_zone (y)) {
+                on_enter_header_zone ();
+            } else if (mouse_at_top && hide_timeout_id == 0) {
+                schedule_header_hide (DURATION_MOUSE_HIDE);
+            }
+        });
+
+        var gesture_drag = new Gtk.GestureDrag () {
+            touch_only = true
+        };
+        gesture_drag.drag_begin.connect ((x, y) => {
+            if (is_in_header_zone (y)) {
+                on_enter_header_zone ();
+            }
+        });
+        gesture_drag.drag_end.connect ((x, y) => {
+            if (mouse_at_top && hide_timeout_id == 0) {
+                schedule_header_hide (DURATION_TOUCH_HIDE);
+            }
+        });
+        // NOTE: cast to avoid trying to convert to Gtk.ShortcutController
+        ((Gtk.Widget) this).add_controller (event_controller_motion);
+        ((Gtk.Widget) this).add_controller (gesture_drag);
 
         home_button.clicked.connect (() => {
             web_view.load_uri (App.settings.get_string ("server"));
@@ -358,6 +324,11 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             demo_banner.revealed = false;
             stack.visible_child_name = "error";
             return true;
+        });
+
+
+        web_view.notify["zoom-level"].connect (() => {
+            zoom_label.label = zoom_label_text ();
         });
 
         error_retry_button.clicked.connect (() => {
@@ -439,6 +410,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         if (current_url.has_prefix (default_server)) {
             demo_banner.revealed = true;
+            return;
         } else if (current_url.has_prefix (server)) {
             demo_banner.revealed = false;
         } else {
@@ -446,10 +418,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             // the browser…
             demo_banner.revealed = false;
             home_revealer.reveal_child = true;
-        }
-
-        if (current_url.has_prefix (default_server)) {
-            return;
         }
 
         web_view.evaluate_javascript.begin (
@@ -512,6 +480,31 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             fullscreen ();
             toast_overlay.add_toast (fullscreen_toast);
         }
+    }
+
+    private bool is_in_header_zone (double y) {
+        return y <= DISTANCE_HEADER_REVEAL ||
+            (header_revealer.child_revealed && y <= header_revealer.get_height ());
+    }
+
+    private void on_enter_header_zone () {
+        if (hide_timeout_id != 0) {
+            Source.remove (hide_timeout_id);
+            hide_timeout_id = 0;
+        }
+        if (!mouse_at_top) {
+            mouse_at_top = true;
+            update_header_visibility ();
+        }
+    }
+
+    private void schedule_header_hide (uint delay) {
+        hide_timeout_id = Timeout.add (delay, () => {
+            hide_timeout_id = 0;
+            mouse_at_top = false;
+            update_header_visibility ();
+            return Source.REMOVE;
+        });
     }
 
     private void update_header_visibility () {

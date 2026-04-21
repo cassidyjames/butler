@@ -28,11 +28,11 @@ template $ButlerSettingsDialog : Adw.PreferencesDialog {
     }
 
     Adw.PreferencesGroup {
-      title: _("Header Colors");
-      description: _("Better match your dashboard");
+      title: _("Styling");
+      description: _("Match or show off your dashboard");
 
       [header-suffix]
-      Gtk.Button color_reset_button {
+      Gtk.Button styling_reset_button {
         icon-name: "step-back-symbolic";
         tooltip-text: _("Reset to Default");
         valign: center;
@@ -41,7 +41,7 @@ template $ButlerSettingsDialog : Adw.PreferencesDialog {
       }
 
       Adw.ActionRow {
-        title: _("Light");
+        title: _("Light Background");
         subtitle: _("Used with default system style preference");
         activatable-widget: color_light_button;
 
@@ -53,7 +53,7 @@ template $ButlerSettingsDialog : Adw.PreferencesDialog {
       }
 
       Adw.ActionRow {
-        title: _("Dark");
+        title: _("Dark Background");
         subtitle: _("Used with dark system style preference");
         activatable-widget: color_dark_button;
 
@@ -65,8 +65,13 @@ template $ButlerSettingsDialog : Adw.PreferencesDialog {
       }
 
       Adw.SwitchRow expressive_row {
-        title: _("Expressive");
+        title: _("Expressive Styling");
         subtitle: _("Tint the whole UI; may reduce contrast");
+      }
+
+      Adw.SwitchRow autohide_row {
+        title: _("Hide Titlebar");
+        subtitle: _("Mouse or tap near the top of the window to reveal");
       }
     }
   }

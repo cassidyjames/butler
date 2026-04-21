@@ -87,6 +87,16 @@
   </screenshots>
 
   <releases>
+    <release version="1.7.0" date="2026-04-20">
+      <description>
+        <p>Auto-hiding title bar</p>
+        <ul>
+          <li>New option to automatically hide the title bar for an even more minimal look</li>
+          <li>Title bar can be revealed by mousing to or tapping the top of the window</li>
+          <li>Improved URL saving and restoring</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.6.7" date="2026-04-20">
       <description>
         <p>Updated with the latest GNOME 50 platform</p>

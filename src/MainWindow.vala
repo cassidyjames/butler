@@ -12,12 +12,14 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     private extern static void add_css_provider_for_display (Gdk.Display display, Gtk.StyleProvider provider, uint priority);
 
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
+        { "open_file", on_open_file_activate, "s" },
+        { "zoom-out", zoom_out },
+        { "zoom-default", zoom_default },
+        { "zoom-in", zoom_in },
         { "reload", on_reload_activate },
-        { "toggle_fullscreen", toggle_fullscreen },
         { "settings", on_settings_activate },
         { "log_out", on_log_out_activate },
         { "about", on_about_activate },
-        { "open_file", on_open_file_activate, "s" },
     };
 
     [GtkChild] private unowned Gtk.Revealer header_revealer;
@@ -40,6 +42,15 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     private Gtk.Box downloads_box;
     private string? last_failed_uri = null;
     private int active_downloads = 0;
+    private bool mouse_at_top = false;
+    private uint hide_timeout_id = 0;
+
+    private const int DISTANCE_HEADER_REVEAL = 8;
+    private const uint DURATION_MOUSE_HIDE = 500;
+    private const uint DURATION_TOUCH_HIDE = 2000;
+    private const double ZOOM_STEP = 0.1;
+    private const double ZOOM_MIN = 0.4;
+    private const double ZOOM_MAX = 3.0;
 
     private const string CSS = """
         :root {
@@ -50,7 +61,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
           --headerbar-fg-dark: %s;
         }
     """;
-    private Gtk.CssProvider css_provider;
+    private Gtk.CssProvider css_provider = new Gtk.CssProvider ();
 
     public MainWindow (Adw.Application app) {
         Object (application: app);
@@ -76,7 +87,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         title = APP_NAME;
         icon_name = APP_ID;
 
-        header_revealer.reveal_child = !fullscreened;
+        update_header_visibility ();
 
         loading_page.title = APP_NAME;
         loading_page.description = _("Loading the dashboard…");
@@ -113,10 +124,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         }
 
         stack.add_named (web_view, "web");
-
-        web_view.notify["zoom-level"].connect (() => {
-            zoom_label.label = zoom_label_text ();
-        });
 
         downloads_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 12) {
             margin_top = 6,
@@ -222,18 +229,16 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
                     download_button.visible = false;
                 }
 
-                if (!failed) {
-                    var file = File.new_for_path (download.get_destination ());
-                    var complete_toast = new Adw.Toast (
-                        _("Downloaded “%s”").printf (file.get_basename ())
-                    ) {
-                        button_label = _("Open"),
-                        action_name = "win.open_file",
-                        timeout = 0
-                    };
-                    complete_toast.set_action_target ("s", file.get_uri ());
-                    toast_overlay.add_toast (complete_toast);
-                }
+                var file = File.new_for_path (download.get_destination ());
+                var complete_toast = new Adw.Toast (
+                    _("Downloaded “%s”").printf (file.get_basename ())
+                ) {
+                    button_label = _("Open"),
+                    action_name = "win.open_file",
+                    timeout = 0
+                };
+                complete_toast.set_action_target ("s", file.get_uri ());
+                toast_overlay.add_toast (complete_toast);
             });
         });
 
@@ -245,6 +250,11 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             out headerbar_color_dark
         );
         update_headerbar_colors (headerbar_color_light, headerbar_color_dark);
+        add_css_provider_for_display (
+            Gdk.Display.get_default (),
+            css_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1
+        );
 
         int window_width, window_height;
         App.settings.get (
@@ -256,11 +266,52 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         set_default_size (window_width, window_height);
 
+        var event_controller_motion = new Gtk.EventControllerMotion ();
+        event_controller_motion.motion.connect ((x, y) => {
+            if (is_in_header_zone (y)) {
+                on_enter_header_zone ();
+            } else if (mouse_at_top && hide_timeout_id == 0) {
+                schedule_header_hide (DURATION_MOUSE_HIDE);
+            }
+        });
+
+        var gesture_drag = new Gtk.GestureDrag () {
+            touch_only = true
+        };
+        gesture_drag.drag_begin.connect ((x, y) => {
+            if (is_in_header_zone (y)) {
+                on_enter_header_zone ();
+            }
+        });
+        gesture_drag.drag_end.connect ((x, y) => {
+            if (mouse_at_top && hide_timeout_id == 0) {
+                schedule_header_hide (DURATION_TOUCH_HIDE);
+            }
+        });
+        // NOTE: cast to avoid trying to convert to Gtk.ShortcutController
+        ((Gtk.Widget) this).add_controller (event_controller_motion);
+        ((Gtk.Widget) this).add_controller (gesture_drag);
+
         home_button.clicked.connect (() => {
             web_view.load_uri (App.settings.get_string ("server"));
         });
 
+        var fullscreen_action = new GLib.SimpleAction.stateful (
+            "toggle_fullscreen", null, new GLib.Variant.boolean (fullscreened)
+        );
+        fullscreen_action.activate.connect (toggle_fullscreen);
+        add_action (fullscreen_action);
+
+        App.settings.changed["autohide-titlebar"].connect (update_header_visibility);
+        notify["fullscreened"].connect (() => {
+            fullscreen_action.set_state (new GLib.Variant.boolean (fullscreened));
+            update_header_visibility ();
+        });
+
         close_request.connect (() => {
+            if (web_view.uri != null) {
+                App.settings.set_string ("current-url", web_view.uri);
+            }
             save_window_state ();
             return Gdk.EVENT_PROPAGATE;
         });
@@ -273,6 +324,11 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             demo_banner.revealed = false;
             stack.visible_child_name = "error";
             return true;
+        });
+
+
+        web_view.notify["zoom-level"].connect (() => {
+            zoom_label.label = zoom_label_text ();
         });
 
         error_retry_button.clicked.connect (() => {
@@ -301,8 +357,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         var dark_rgba = Gdk.RGBA ();
         dark_rgba.parse (dark);
 
-        css_provider = new Gtk.CssProvider ();
-
         var css = CSS.printf (
             light_rgba.to_string (),
             contrasting_foreground_color (light_rgba).to_string (),
@@ -311,11 +365,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         );
 
         css_provider.load_from_string (css);
-        add_css_provider_for_display (
-            Gdk.Display.get_default (),
-            css_provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1
-        );
     }
 
     private void save_window_state () {
@@ -359,10 +408,9 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         string server = App.settings.get_string ("server");
         string current_url = web_view.uri;
 
-        App.settings.set_string ("current-url", current_url);
-
         if (current_url.has_prefix (default_server)) {
             demo_banner.revealed = true;
+            return;
         } else if (current_url.has_prefix (server)) {
             demo_banner.revealed = false;
         } else {
@@ -370,10 +418,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             // the browser…
             demo_banner.revealed = false;
             home_revealer.reveal_child = true;
-        }
-
-        if (current_url.has_prefix (default_server)) {
-            return;
         }
 
         web_view.evaluate_javascript.begin (
@@ -392,37 +436,31 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         );
     }
 
-    public void zoom_in () {
-        if (web_view.zoom_level < 4.9) {
-            web_view.zoom_level = web_view.zoom_level + 0.1;
-        } else {
+    private void zoom_in () {
+        if (web_view.zoom_level >= ZOOM_MAX) {
             Gdk.Display.get_default ().beep ();
             warning ("Zoom already max");
+            return;
         }
-
-        return;
+        web_view.zoom_level = double.min (web_view.zoom_level + ZOOM_STEP, ZOOM_MAX);
     }
 
-    public void zoom_out () {
-        if (web_view.zoom_level > 0.3) {
-            web_view.zoom_level = web_view.zoom_level - 0.1;
-        } else {
+    private void zoom_out () {
+        if (web_view.zoom_level <= ZOOM_MIN) {
             Gdk.Display.get_default ().beep ();
             warning ("Zoom already min");
+            return;
         }
-
-        return;
+        web_view.zoom_level = double.max (web_view.zoom_level - ZOOM_STEP, ZOOM_MIN);
     }
 
-    public void zoom_default () {
+    private void zoom_default () {
         if (web_view.zoom_level != 1.0) {
             web_view.zoom_level = 1.0;
         } else {
             Gdk.Display.get_default ().beep ();
             warning ("Zoom already default");
         }
-
-        return;
     }
 
     private void log_out () {
@@ -434,16 +472,44 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         );
     }
 
-    public void toggle_fullscreen () {
+    private void toggle_fullscreen () {
         if (fullscreened) {
             unfullscreen ();
-            header_revealer.set_reveal_child (true);
             fullscreen_toast.dismiss ();
         } else {
             fullscreen ();
-            header_revealer.set_reveal_child (false);
             toast_overlay.add_toast (fullscreen_toast);
         }
+    }
+
+    private bool is_in_header_zone (double y) {
+        return y <= DISTANCE_HEADER_REVEAL ||
+            (header_revealer.child_revealed && y <= header_revealer.get_height ());
+    }
+
+    private void on_enter_header_zone () {
+        if (hide_timeout_id != 0) {
+            Source.remove (hide_timeout_id);
+            hide_timeout_id = 0;
+        }
+        if (!mouse_at_top) {
+            mouse_at_top = true;
+            update_header_visibility ();
+        }
+    }
+
+    private void schedule_header_hide (uint delay) {
+        hide_timeout_id = Timeout.add (delay, () => {
+            hide_timeout_id = 0;
+            mouse_at_top = false;
+            update_header_visibility ();
+            return Source.REMOVE;
+        });
+    }
+
+    private void update_header_visibility () {
+        bool autohide = App.settings.get_boolean ("autohide-titlebar");
+        header_revealer.reveal_child = (!autohide && !fullscreened) || mouse_at_top;
     }
 
     private void on_reload_activate () {

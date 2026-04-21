@@ -18,12 +18,15 @@ menu main_menu {
   }
   section {
     item (_("_Reload"), "win.reload")
-    item (_("_Log Out…"), "win.log_out")
+    item (_("_Fullscreen"), "win.toggle_fullscreen")
   }
   section {
-    item (_("_Fullscreen"), "win.toggle_fullscreen")
     item (_("_Settings"), "win.settings")
+    item (_("_Log Out…"), "win.log_out")
     item (_("_About Butler"), "win.about")
+  }
+  section {
+    item (_("_Quit"), "app.quit")
   }
 }
 
@@ -36,8 +39,11 @@ template $ButlerMainWindow : Adw.ApplicationWindow {
     orientation: vertical;
 
     Gtk.Revealer header_revealer {
+      transition-type: slide_down;
+
       Adw.HeaderBar main_headerbar {
         name: "main-headerbar";
+
         [start]
         Gtk.Revealer home_revealer {
           reveal-child: false;
@@ -70,11 +76,11 @@ template $ButlerMainWindow : Adw.ApplicationWindow {
               Gtk.Button {
                 icon-name: "zoom-out-symbolic";
                 tooltip-text: _("Zoom Out");
-                action-name: "app.zoom-out";
+                action-name: "win.zoom-out";
               }
 
               Gtk.Button {
-                action-name: "app.zoom-default";
+                action-name: "win.zoom-default";
                 tooltip-text: _("Reset Zoom");
 
                 child: Gtk.Label zoom_label {
@@ -86,7 +92,7 @@ template $ButlerMainWindow : Adw.ApplicationWindow {
               Gtk.Button {
                 icon-name: "zoom-in-symbolic";
                 tooltip-text: _("Zoom In");
-                action-name: "app.zoom-in";
+                action-name: "win.zoom-in";
               }
             }
           };

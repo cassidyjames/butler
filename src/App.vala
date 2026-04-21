@@ -8,6 +8,7 @@ public class Butler.App : Adw.Application {
 
     public App () {
         Object ( application_id: APP_ID );
+        _instance = this;
     }
 
     public static App _instance = null;
@@ -21,7 +22,7 @@ public class Butler.App : Adw.Application {
     }
 
     static construct {
-        settings = new Settings (App.instance.application_id);
+        settings = new Settings (APP_ID);
     }
 
     protected override void activate () {
@@ -29,30 +30,16 @@ public class Butler.App : Adw.Application {
         app_window.present ();
 
         var quit_action = new SimpleAction ("quit", null);
-        var toggle_fullscreen_action = new SimpleAction ("toggle_fullscreen", null);
-        var zoom_in_action = new SimpleAction ("zoom-in", null);
-        var zoom_out_action = new SimpleAction ("zoom-out", null);
-        var zoom_default_action = new SimpleAction ("zoom-default", null);
-
         add_action (quit_action);
-        add_action (toggle_fullscreen_action);
-        add_action (zoom_in_action);
-        add_action (zoom_out_action);
-        add_action (zoom_default_action);
+        quit_action.activate.connect (quit);
 
-        set_accels_for_action ("app.quit", {"<Ctrl>Q", "<Ctrl>W"});
-        set_accels_for_action ("app.toggle_fullscreen", {"F11"});
-        set_accels_for_action ("app.zoom-in", {"<Ctrl>plus", "<Ctrl>equal"});
-        set_accels_for_action ("app.zoom-out", {"<Ctrl>minus"});
-        set_accels_for_action ("app.zoom-default", {"<Ctrl>0"});
-
-        quit_action.activate.connect (() => {
-            quit ();
-        });
-        toggle_fullscreen_action.activate.connect (app_window.toggle_fullscreen);
-        zoom_in_action.activate.connect (app_window.zoom_in);
-        zoom_out_action.activate.connect (app_window.zoom_out);
-        zoom_default_action.activate.connect (app_window.zoom_default);
+        set_accels_for_action ("win.zoom-out", {"<Ctrl>minus"});
+        set_accels_for_action ("win.zoom-default", {"<Ctrl>0"});
+        set_accels_for_action ("win.zoom-in", {"<Ctrl>plus", "<Ctrl>equal"});
+        set_accels_for_action ("win.reload", {"<Ctrl>R"});
+        set_accels_for_action ("win.toggle_fullscreen", {"F11"});
+        set_accels_for_action ("win.settings", {"<Ctrl>comma"});
+        set_accels_for_action ("app.quit", {"<Ctrl>Q"});
     }
 
     public static int main (string[] args) {

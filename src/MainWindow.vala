@@ -12,12 +12,14 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     private extern static void add_css_provider_for_display (Gdk.Display display, Gtk.StyleProvider provider, uint priority);
 
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
+        { "open_file", on_open_file_activate, "s" },
+        { "zoom-out", zoom_out },
+        { "zoom-default", zoom_default },
+        { "zoom-in", zoom_in },
         { "reload", on_reload_activate },
-        { "toggle_fullscreen", toggle_fullscreen },
         { "settings", on_settings_activate },
         { "log_out", on_log_out_activate },
         { "about", on_about_activate },
-        { "open_file", on_open_file_activate, "s" },
     };
 
     [GtkChild] private unowned Gtk.Revealer header_revealer;
@@ -40,6 +42,8 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     private Gtk.Box downloads_box;
     private string? last_failed_uri = null;
     private int active_downloads = 0;
+    private bool mouse_at_top = false;
+    private uint hide_timeout_id = 0;
 
     private const string CSS = """
         :root {
@@ -76,7 +80,31 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         title = APP_NAME;
         icon_name = APP_ID;
 
-        header_revealer.reveal_child = !fullscreened;
+        var motion = new Gtk.EventControllerMotion ();
+        motion.motion.connect ((x, y) => {
+            bool in_header_zone = y <= 8 ||
+                (header_revealer.child_revealed && y <= header_revealer.get_height ());
+            if (in_header_zone) {
+                if (hide_timeout_id != 0) {
+                    Source.remove (hide_timeout_id);
+                    hide_timeout_id = 0;
+                }
+                if (!mouse_at_top) {
+                    mouse_at_top = true;
+                    update_header_visibility ();
+                }
+            } else if (mouse_at_top && hide_timeout_id == 0) {
+                hide_timeout_id = Timeout.add (500, () => {
+                    hide_timeout_id = 0;
+                    mouse_at_top = false;
+                    update_header_visibility ();
+                    return Source.REMOVE;
+                });
+            }
+        });
+        ((Gtk.Widget) this).add_controller (motion);
+
+        update_header_visibility ();
 
         loading_page.title = APP_NAME;
         loading_page.description = _("Loading the dashboard…");
@@ -260,7 +288,22 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             web_view.load_uri (App.settings.get_string ("server"));
         });
 
+        var fullscreen_action = new GLib.SimpleAction.stateful (
+            "toggle_fullscreen", null, new GLib.Variant.boolean (fullscreened)
+        );
+        fullscreen_action.activate.connect (toggle_fullscreen);
+        add_action (fullscreen_action);
+
+        App.settings.changed["autohide-titlebar"].connect (update_header_visibility);
+        notify["fullscreened"].connect (() => {
+            fullscreen_action.set_state (new GLib.Variant.boolean (fullscreened));
+            update_header_visibility ();
+        });
+
         close_request.connect (() => {
+            if (web_view.uri != null) {
+                App.settings.set_string ("current-url", web_view.uri);
+            }
             save_window_state ();
             return Gdk.EVENT_PROPAGATE;
         });
@@ -359,8 +402,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         string server = App.settings.get_string ("server");
         string current_url = web_view.uri;
 
-        App.settings.set_string ("current-url", current_url);
-
         if (current_url.has_prefix (default_server)) {
             demo_banner.revealed = true;
         } else if (current_url.has_prefix (server)) {
@@ -437,13 +478,17 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     public void toggle_fullscreen () {
         if (fullscreened) {
             unfullscreen ();
-            header_revealer.set_reveal_child (true);
             fullscreen_toast.dismiss ();
         } else {
             fullscreen ();
-            header_revealer.set_reveal_child (false);
             toast_overlay.add_toast (fullscreen_toast);
         }
+        update_header_visibility ();
+    }
+
+    private void update_header_visibility () {
+        bool autohide = App.settings.get_boolean ("autohide-titlebar");
+        header_revealer.reveal_child = (!autohide && !fullscreened) || mouse_at_top;
     }
 
     private void on_reload_activate () {

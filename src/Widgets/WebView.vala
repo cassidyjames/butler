@@ -12,7 +12,10 @@ public class Butler.WebView : WebKit.WebView {
         Object (
             hexpand: true,
             vexpand: true,
-            network_session: new WebKit.NetworkSession (null, null)
+            network_session: new WebKit.NetworkSession (
+                Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_user_data_dir (), Environment.get_prgname ()),
+                Path.build_path (Path.DIR_SEPARATOR_S, Environment.get_user_cache_dir (), Environment.get_prgname ())
+            )
         );
     }
 

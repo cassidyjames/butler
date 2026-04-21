@@ -45,6 +45,13 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     private bool mouse_at_top = false;
     private uint hide_timeout_id = 0;
 
+    private const int DISTANCE_HEADER_REVEAL = 8;
+    private const uint DURATION_MOUSE_HIDE = 500;
+    private const uint DURATION_TOUCH_HIDE = 2000;
+    private const double ZOOM_STEP = 0.1;
+    private const double ZOOM_MIN = 0.3;
+    private const double ZOOM_MAX = 4.9;
+
     private const string CSS = """
         :root {
           --headerbar-bg-light: %s;
@@ -82,7 +89,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         var motion = new Gtk.EventControllerMotion ();
         motion.motion.connect ((x, y) => {
-            bool in_header_zone = y <= 8 ||
+            bool in_header_zone = y <= DISTANCE_HEADER_REVEAL ||
                 (header_revealer.child_revealed && y <= header_revealer.get_height ());
             if (in_header_zone) {
                 if (hide_timeout_id != 0) {
@@ -94,7 +101,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
                     update_header_visibility ();
                 }
             } else if (mouse_at_top && hide_timeout_id == 0) {
-                hide_timeout_id = Timeout.add (500, () => {
+                hide_timeout_id = Timeout.add (DURATION_MOUSE_HIDE, () => {
                     hide_timeout_id = 0;
                     mouse_at_top = false;
                     update_header_visibility ();
@@ -109,7 +116,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             touch_only = true
         };
         touch_drag.drag_begin.connect ((x, y) => {
-            bool in_header_zone = y <= 8 ||
+            bool in_header_zone = y <= DISTANCE_HEADER_REVEAL ||
                 (header_revealer.child_revealed && y <= header_revealer.get_height ());
             if (in_header_zone) {
                 if (hide_timeout_id != 0) {
@@ -124,7 +131,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         });
         touch_drag.drag_end.connect ((x, y) => {
             if (mouse_at_top && hide_timeout_id == 0) {
-                hide_timeout_id = Timeout.add (2000, () => {
+                hide_timeout_id = Timeout.add (DURATION_TOUCH_HIDE, () => {
                     hide_timeout_id = 0;
                     mouse_at_top = false;
                     update_header_visibility ();
@@ -462,8 +469,8 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     }
 
     private void zoom_in () {
-        if (web_view.zoom_level < 4.9) {
-            web_view.zoom_level = web_view.zoom_level + 0.1;
+        if (web_view.zoom_level < ZOOM_MAX) {
+            web_view.zoom_level = web_view.zoom_level + ZOOM_STEP;
         } else {
             Gdk.Display.get_default ().beep ();
             warning ("Zoom already max");
@@ -471,8 +478,8 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     }
 
     private void zoom_out () {
-        if (web_view.zoom_level > 0.3) {
-            web_view.zoom_level = web_view.zoom_level - 0.1;
+        if (web_view.zoom_level > ZOOM_MIN) {
+            web_view.zoom_level = web_view.zoom_level - ZOOM_STEP;
         } else {
             Gdk.Display.get_default ().beep ();
             warning ("Zoom already min");

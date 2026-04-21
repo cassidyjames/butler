@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
   <schema path="/com/cassidyjames/butler/" id="@app_id@">
+    <key name="autohide-titlebar" type="b">
+      <default>false</default>
+      <summary>Auto-hide titlebar</summary>
+      <description>Whether to auto-hide the titlebar even when not fullscreened</description>
+    </key>
     <key name="current-url" type="s">
       <default>""</default>
       <summary>Current URL</summary>
@@ -15,11 +20,6 @@
       <default>("#ffffff", "#1c1c1c")</default>
       <summary>Header colors</summary>
       <description>Colors for the header bar to better integrate into custom servers, stored as a (light, dark) pair to be used according to the system color scheme preference</description>
-    </key>
-    <key name="autohide-titlebar" type="b">
-      <default>false</default>
-      <summary>Auto-hide titlebar</summary>
-      <description>Whether to auto-hide the titlebar even when not fullscreened</description>
     </key>
     <key name="server" type="s">
       <default>"https://demo.home-assistant.io/"</default>

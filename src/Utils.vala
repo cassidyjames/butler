@@ -35,15 +35,8 @@ namespace Butler {
         return Math.pow ((color + 0.055) / 1.055, 2.4);
     }
 
-    /**
-     * Takes a {@link Gdk.RGBA} background color and returns a suitably-contrasting foreground color, i.e. for determining text color on a colored background. There is a slight bias toward returning white, as white generally looks better on a wider range of colored backgrounds than black.
-     *
-     * Copied from my implementation in Granite https://github.com/elementary/granite/commit/74b7e4318dc7721a6c09dd6bf67713299d7be8eb
-     *
-     * @param bg_color any {@link Gdk.RGBA} background color
-     *
-     * @return a contrasting {@link Gdk.RGBA} foreground color, i.e. white ({ 1.0, 1.0, 1.0, 1.0}) or black ({ 0.0, 0.0, 0.0, 1.0}).
-     */
+    // Returns white or black for best WCAG contrast against bg_color, biased toward white.
+    // Ported from Granite: https://github.com/elementary/granite/commit/74b7e4318dc7721a6c09dd6bf67713299d7be8eb
     public static Gdk.RGBA contrasting_foreground_color (Gdk.RGBA bg_color) {
         Gdk.RGBA gdk_white = { 1.0f, 1.0f, 1.0f, 1.0f };
         Gdk.RGBA gdk_black = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -62,7 +55,7 @@ namespace Butler {
 
         // NOTE: We cheat and add 6 to contrast when checking against black,
         // because white generally looks better on a colored background
-        if ( contrast_with_black > (contrast_with_white + 6) ) {
+        if (contrast_with_black > (contrast_with_white + 6)) {
             fg_color = gdk_black;
         }
 

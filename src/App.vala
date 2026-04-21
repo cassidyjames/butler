@@ -7,18 +7,7 @@ public class Butler.App : Adw.Application {
     public static GLib.Settings settings;
 
     public App () {
-        Object ( application_id: APP_ID );
-        _instance = this;
-    }
-
-    public static App _instance = null;
-    public static App instance {
-        get {
-            if (_instance == null) {
-                _instance = new App ();
-            }
-            return _instance;
-        }
+        Object (application_id: APP_ID);
     }
 
     static construct {
@@ -26,20 +15,25 @@ public class Butler.App : Adw.Application {
     }
 
     protected override void activate () {
+        if (active_window != null) {
+            active_window.present ();
+            return;
+        }
+
         var app_window = new MainWindow (this);
         app_window.present ();
 
         var quit_action = new SimpleAction ("quit", null);
-        add_action (quit_action);
         quit_action.activate.connect (quit);
+        add_action (quit_action);
 
-        set_accels_for_action ("win.zoom-out", {"<Ctrl>minus"});
-        set_accels_for_action ("win.zoom-default", {"<Ctrl>0"});
+        set_accels_for_action ("app.quit", {"<Ctrl>Q"});
         set_accels_for_action ("win.zoom-in", {"<Ctrl>plus", "<Ctrl>equal"});
+        set_accels_for_action ("win.zoom-default", {"<Ctrl>0"});
+        set_accels_for_action ("win.zoom-out", {"<Ctrl>minus"});
         set_accels_for_action ("win.reload", {"<Ctrl>R"});
         set_accels_for_action ("win.toggle_fullscreen", {"F11"});
         set_accels_for_action ("win.settings", {"<Ctrl>comma"});
-        set_accels_for_action ("app.quit", {"<Ctrl>Q"});
     }
 
     public static int main (string[] args) {

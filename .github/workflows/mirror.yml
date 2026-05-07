@@ -19,3 +19,9 @@ jobs:
         with:
           destination: https://gitlab.com/cassidyjames/butler.git
           token: ${{ secrets.GITLAB_TOKEN }}
+
+      - uses: roostorg/mirror@main
+        with:
+          destination: https://codeberg.org/cassidyjames/butler.git
+          token: ${{ secrets.CODEBERG_TOKEN }}
+          token_username: cassidyjames

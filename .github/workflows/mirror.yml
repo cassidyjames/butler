@@ -1,0 +1,21 @@
+name: Mirror
+on:
+  push:
+    branches:
+      - 'main'
+  schedule:
+    - cron: '0 */1 * * *'
+  workflow_dispatch:
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      
+      - name: GitLab
+        uses: roostorg/mirror@main
+        with:
+          destination: https://gitlab.com/cassidyjames/butler.git
+          token: ${{ secrets.GITLAB_TOKEN }}

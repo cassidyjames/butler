@@ -20,8 +20,16 @@ jobs:
           destination: https://gitlab.com/cassidyjames/butler.git
           token: ${{ secrets.GITLAB_TOKEN }}
 
-      - uses: roostorg/mirror@main
+      - name: Codeberg
+        uses: roostorg/mirror@main
         with:
           destination: https://codeberg.org/cassidyjames/butler.git
           token: ${{ secrets.CODEBERG_TOKEN }}
           token_username: cassidyjames
+
+      - name: Tangled
+        uses: roostorg/mirror@main
+        with:
+          destination: git@tangled.org:cassidyjames.com/butler
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_known_hosts: ${{ secrets.TANGLED_KNOWN_HOSTS }}

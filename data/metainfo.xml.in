@@ -87,7 +87,7 @@
   </screenshots>
 
   <releases>
-    <release version="1.7.0" date="2026-04-20">
+    <release version="1.7.0" date="2026-05-27">
       <description>
         <p>Auto-hiding title bar</p>
         <ul>

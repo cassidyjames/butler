@@ -206,5 +206,11 @@ template $ButlerMainWindow : Adw.ApplicationWindow {
       action-name: "win.settings";
       button-label: _("Change _Server…");
     }
+
+    Adw.Banner restart_banner {
+      title: _("Restart Butler to Apply Changes");
+      action-name: "app.restart";
+      button-label: _("_Restart");
+    }
   };
 }

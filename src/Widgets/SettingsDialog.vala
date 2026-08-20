@@ -10,8 +10,10 @@ public class Butler.SettingsDialog : Adw.PreferencesDialog {
     [GtkChild] private unowned Gtk.ColorDialogButton color_light_button;
     [GtkChild] private unowned Gtk.ColorDialogButton color_dark_button;
     [GtkChild] private unowned Gtk.Button styling_reset_button;
+    [GtkChild] private unowned Gtk.Button performance_reset_button;
     [GtkChild] private unowned Adw.SwitchRow expressive_row;
     [GtkChild] private unowned Adw.SwitchRow autohide_row;
+    [GtkChild] private unowned Adw.SwitchRow hardware_acceleration_row;
 
     public signal void server_changed ();
     public signal void colors_changed (string light, string dark);
@@ -74,11 +76,21 @@ public class Butler.SettingsDialog : Adw.PreferencesDialog {
             color_dark_button.rgba = dark_rgba;
         });
 
+        performance_reset_button.clicked.connect (() => {
+            App.settings.reset ("hardware-acceleration");
+        });
+
         color_light_button.notify["rgba"].connect (on_color_button_change);
         color_dark_button.notify["rgba"].connect (on_color_button_change);
 
         App.settings.bind ("expressive-styling", expressive_row, "active", SettingsBindFlags.DEFAULT);
         App.settings.bind ("autohide-titlebar", autohide_row, "active", SettingsBindFlags.DEFAULT);
+        App.settings.bind (
+            "hardware-acceleration",
+            hardware_acceleration_row,
+            "active",
+            SettingsBindFlags.DEFAULT
+        );
     }
 
     private void on_color_button_change () {

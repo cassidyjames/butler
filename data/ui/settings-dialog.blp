@@ -74,5 +74,23 @@ template $ButlerSettingsDialog : Adw.PreferencesDialog {
         subtitle: _("Mouse or tap near the top of the window to reveal");
       }
     }
+
+    Adw.PreferencesGroup {
+      title: _("Performance");
+
+      [header-suffix]
+      Gtk.Button performance_reset_button {
+        icon-name: "step-back-symbolic";
+        tooltip-text: _("Reset to Default");
+        valign: center;
+
+        styles ["flat"]
+      }
+
+      Adw.SwitchRow hardware_acceleration_row {
+        title: _("Hardware Acceleration");
+        subtitle: _("Disabling may reduce resource usage on some hardware, but can cause other issues; restart required");
+      }
+    }
   }
 }

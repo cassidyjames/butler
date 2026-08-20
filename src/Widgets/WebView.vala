@@ -33,6 +33,10 @@ public class Butler.WebView : WebKit.WebView {
             enable_webrtc = true
         };
 
+        if (App.settings.get_boolean ("hardware-acceleration") == false) {
+            webkit_settings.hardware_acceleration_policy = WebKit.HardwareAccelerationPolicy.NEVER;
+        }
+
         settings = webkit_settings;
 
         var cookie_manager = network_session.get_cookie_manager ();

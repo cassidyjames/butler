@@ -21,6 +21,11 @@
       <summary>Header colors</summary>
       <description>Colors for the header bar to better integrate into custom servers, stored as a (light, dark) pair to be used according to the system color scheme preference</description>
     </key>
+    <key name="hardware-acceleration" type="b">
+      <default>true</default>
+      <summary>Hardware acceleration</summary>
+      <description>Whether WebKitGTK hardware acceleration should be enabled, or disabled to avoid excessive GPU or memory use on certain hardware</description>
+    </key>
     <key name="server" type="s">
       <default>"https://demo.home-assistant.io/"</default>
       <summary>Home Assistant server URL</summary>

@@ -87,6 +87,11 @@
   </screenshots>
 
   <releases>
+    <release version="1.8.0" date="2026-08-20">
+      <description>
+        <p>New option to disable hardware acceleration which can help performance on some hardware</p>
+      </description>
+    </release>
     <release version="1.7.0" date="2026-05-27">
       <description>
         <p>Auto-hiding title bar</p>

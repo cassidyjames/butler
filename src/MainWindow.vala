@@ -29,6 +29,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     [GtkChild] private unowned Adw.ToastOverlay toast_overlay;
     [GtkChild] private unowned Gtk.Button open_button;
     [GtkChild] private unowned Adw.Banner demo_banner;
+    [GtkChild] private unowned Adw.Banner restart_banner;
     [GtkChild] private unowned Gtk.Stack stack;
     [GtkChild] private unowned Adw.StatusPage loading_page;
     [GtkChild] private unowned Adw.StatusPage error_page;
@@ -303,6 +304,9 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         add_action (fullscreen_action);
 
         App.settings.changed["autohide-titlebar"].connect (update_header_visibility);
+        App.settings.changed["hardware-acceleration"].connect (() => {
+            restart_banner.revealed = true;
+        });
         notify["fullscreened"].connect (() => {
             fullscreen_action.set_state (new GLib.Variant.boolean (fullscreened));
             update_header_visibility ();

@@ -3,8 +3,7 @@ on:
   push:
     branches:
       - 'main'
-  schedule:
-    - cron: '0 */1 * * *'
+  release:
   workflow_dispatch:
 jobs:
   mirror:

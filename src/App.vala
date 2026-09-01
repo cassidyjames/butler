@@ -7,7 +7,10 @@ public class Butler.App : Adw.Application {
     public static GLib.Settings settings;
 
     public App () {
-        Object (application_id: APP_ID);
+        Object (
+            application_id: APP_ID,
+            flags: ApplicationFlags.ALLOW_REPLACEMENT
+        );
     }
 
     static construct {
@@ -42,16 +45,14 @@ public class Butler.App : Adw.Application {
 
     private void restart () {
         try {
-            // Flatpak kills every process once the first one exits, so use
-            // `flatpak-spawn` to launch a new instance of the app instead.
             if (Environment.get_variable ("FLATPAK_ID") != null) {
                 Process.spawn_async (null,
-                    { "flatpak-spawn", "--host", "flatpak", "run", APP_ID },
+                    { "flatpak-spawn", "--latest-version", APP_ID, "--gapplication-replace" },
                     null, SpawnFlags.SEARCH_PATH, null, null
                 );
             } else {
                 Process.spawn_async (null,
-                    { "/proc/self/exe" },
+                    { "/proc/self/exe", "--gapplication-replace" },
                     null, 0, null, null
                 );
             }

@@ -1,6 +1,6 @@
 name: Request a feature for Butler
 description: An idea or new functionality
-labels: "Feature"
+labels: Feature
 body:
   - type: markdown
     attributes:
@@ -9,7 +9,7 @@ body:
         provide as much detail as you can below** so we can fully understand,
         triage, address your request.
 
-   - type: textarea
+  - type: textarea
     id: problem
     attributes:
       label: Problem being solved

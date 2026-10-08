@@ -1,0 +1,144 @@
+name: Report a problem
+description: Something is broken or not working correctly
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Thanks for taking the time to report a problem with Butler! **Please
+        provide as much detail as you can below** so we can properly confirm,
+        triage, and hopefully fix your problem.
+
+  - type: textarea
+    id: behavior
+    attributes:
+      label: What happened
+      description: >
+        …and what did you expect to happen, instead?
+      placeholder: On my dashboard, when I click on…
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Butler version
+      description: >
+        What version of Butler are you seeing the problem with? You can find
+        this under **Main Menu** → **About Butler**. If you know the specific
+        commit, you may include that instead.
+    validations:
+      required: true
+
+  - type: input
+    id: ha
+    attributes:
+      label: Home Assistant version
+      description: >
+        What version of Home Assistant are you using when you see the problem?
+        You can find this in Home Assistant under **Settings** → **About** →
+        **Core**.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: arch
+    attributes:
+      label: Processor type
+      description: >
+        What CPU architecture are you running Butler on? If you're using a
+        regular PC, it's likely x86_64; if you're on mobile, it's likely
+        aarch64. If your answer is “Other,” please provide more info below.
+      multiple: false
+      options:
+        - Intel or AMD 64-bit (x86_64)
+        - ARM 64-bit (aarch64)
+        - Other or unsure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: gpu
+    attributes:
+      label: Graphics type
+      description: >
+        What type of GPU are you using when you see the problem in Butler? If
+        your answer is “Other,” please provide more info below.
+      multiple: false
+      options:
+        - Intel
+        - AMD
+        - NVIDIA
+        - Other or unsure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: source
+    attributes:
+      label: Installation source
+      description: >
+        If you're unsure but installed Butler from an app store/software center,
+        check that app store/software center to see if it shows the source. If
+        it's not Flathub, please share more below.
+      multiple: false
+      options:
+        - Flathub
+        - Built from source
+        - Other or unsure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: upstream
+    attributes:
+      label: GNOME Web testing
+      description: >
+        Butler uses WebkitGTK, the same rendering engine as GNOME Web. If your
+        problem has anything to do with the rendering, performance, or use of
+        your Home Assistant server or dashboard (basically anything besides the
+        Butler titlebar, main menu, or settings window), please test if it
+        _also_ happens when using the latest version of GNOME Web installed from
+        Flathub.
+      options:
+        - It also happens in GNOME Web
+        - It does NOT happen in GNOME Web
+        - I have not tested in GNOME Web
+        - It doesn’t make sense to test in GNOME Web
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs/errors
+      description: >
+        Please paste any relevant log output or error messages. **Redact 
+        sensitive information** such as passwords, API keys, tokens, and 
+        personal data before submitting.
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: More info (anything else?)
+      description: >
+        Share any other details or information that could be helpful in
+        reproducing, triaging, or fixing your problem.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      description: >
+        Make sure you’ve completed each step and reviewed the
+        [GNOME Code of Conduct](https://conduct.gnome.org/)
+        before submitting.
+      options:
+        - label: I’ve reviewed and agree to follow the code of conduct
+          required: true

@@ -1,7 +1,6 @@
-name: Report a problem
+name: Report a problem with Butler
 description: Something is broken or not working correctly
-labels:
-  - bug
+labels: Bug
 body:
   - type: markdown
     attributes:

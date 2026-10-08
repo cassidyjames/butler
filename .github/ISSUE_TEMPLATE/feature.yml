@@ -1,0 +1,62 @@
+name: Request a feature for Butler
+description: An idea or new functionality
+labels: Feature
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Thanks for taking the time to request a feature for Butler! **Please
+        provide as much detail as you can below** so we can fully understand,
+        triage, address your request.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem being solved
+      description: >
+        What is the underlying thing you’re hoping is addressed by this feature?
+      placeholder: Every time I use Butler, I have to…
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: >
+        How do you imagine this feature would look or work?
+      placeholder: In the Settings window, Butler could have…
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: >
+        What other possible solutions or features have you considered that would
+        address this?
+    validations:
+      required: false
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: More info (anything else?)
+      description: >
+        Share any other information that could be helpful in understanding,
+        triaging, or addressing your request.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      description: >
+        Make sure you’ve completed each step and reviewed the
+        [GNOME Code of Conduct](https://conduct.gnome.org/)
+        before submitting.
+      options:
+        - label: I’ve reviewed and agree to follow the code of conduct
+          required: true

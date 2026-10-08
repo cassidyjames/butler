@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report an issue to Home Assistant
+    about: 'If your issue also happens in other apps or browsers, report it to Home Assistant'
+    url: https://www.home-assistant.io/help/reporting_issues/

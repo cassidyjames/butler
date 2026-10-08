@@ -1,6 +1,6 @@
-name: Request a feature
+name: Request a feature for Butler
 description: An idea or new functionality
-labels: Feature
+labels: "Feature"
 body:
   - type: markdown
     attributes:

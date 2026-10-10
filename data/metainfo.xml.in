@@ -87,6 +87,11 @@
   </screenshots>
 
   <releases>
+    <release version="1.8.3" date="2026-10-10">
+      <description>
+        <p>Work around WebKit regression with light/dark style switching</p>
+      </description>
+    </release>
     <release version="1.8.2" date="2026-10-08">
       <description>
         <p>Updated with the latest GNOME 51 platform</p>

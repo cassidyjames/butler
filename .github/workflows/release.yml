@@ -9,7 +9,7 @@ jobs:
     name: Flatpak (Release, ${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
     container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-49
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-51
       options: --privileged
     strategy:
       matrix:
@@ -20,8 +20,8 @@ jobs:
           runner: ubuntu-24.04-arm
       fail-fast: false
     steps:
-    - uses: actions/checkout@v4
-    - uses: flatpak/flatpak-github-actions/flatpak-builder@v6.6
+    - uses: actions/checkout@v7
+    - uses: flatpak/flatpak-github-actions/flatpak-builder@v6.8
       with:
         bundle: com.cassidyjames.butler.flatpak
         manifest-path: com.cassidyjames.butler.json
@@ -36,7 +36,7 @@ jobs:
       contents: write
     steps:
     - name: Download Flatpak bundle (aarch64)
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: com.cassidyjames.butler-aarch64.flatpak
 
@@ -48,7 +48,7 @@ jobs:
         gh release upload ${{ github.event.release.tag_name }} com.cassidyjames.butler-${{ github.event.release.tag_name }}-aarch64.flatpak --repo ${{ github.repository }}
 
     - name: Download Flatpak bundle (x86_64)
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: com.cassidyjames.butler-x86_64.flatpak
 

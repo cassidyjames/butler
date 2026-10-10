@@ -25,7 +25,7 @@ jobs:
           runner: ubuntu-24.04-arm
       fail-fast: false
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - uses: flatpak/flatpak-github-actions/flatpak-builder@v6.8
       with:
         bundle: com.cassidyjames.butler.Devel.flatpak

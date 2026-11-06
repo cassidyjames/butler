@@ -7,6 +7,7 @@
 public class Butler.SettingsDialog : Adw.PreferencesDialog {
     [GtkChild] private unowned Adw.EntryRow server_entry;
     [GtkChild] private unowned Gtk.Button server_reset_button;
+    [GtkChild] private unowned Adw.SwitchRow disable_ha_validation_row;
     [GtkChild] private unowned Gtk.ColorDialogButton color_light_button;
     [GtkChild] private unowned Gtk.ColorDialogButton color_dark_button;
     [GtkChild] private unowned Gtk.Button styling_reset_button;
@@ -91,6 +92,7 @@ public class Butler.SettingsDialog : Adw.PreferencesDialog {
             "active",
             SettingsBindFlags.DEFAULT
         );
+        App.settings.bind ("disable-ha-validation", disable_ha_validation_row, "active", SettingsBindFlags.DEFAULT);
     }
 
     private void on_color_button_change () {

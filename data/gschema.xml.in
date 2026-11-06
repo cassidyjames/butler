@@ -11,6 +11,11 @@
       <summary>Current URL</summary>
       <description>The last-viewed URL for restoring state</description>
     </key>
+    <key name="disable-ha-validation" type="b">
+      <default>false</default>
+      <summary>Disable Home Assistant Validation</summary>
+      <description>Disables checking if the server URL points to a valid Home Assistant server. Useful if the server uses does not use Home Assistant for authentication.</description>
+    </key>
     <key name="expressive-styling" type="b">
       <default>false</default>
       <summary>Expressive styling</summary>

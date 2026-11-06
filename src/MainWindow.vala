@@ -430,7 +430,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             (obj, res) => {
                 try {
                     var js_result = web_view.evaluate_javascript.end (res);
-                    if (!js_result.to_boolean ()) {
+                    if (!js_result.to_boolean () && !App.settings.get_boolean("disable-ha-validation")) {
                         stack.visible_child_name = "not-ha";
                     }
                 } catch (Error e) {

@@ -25,6 +25,11 @@ template $ButlerSettingsDialog : Adw.PreferencesDialog {
           styles ["flat"]
         }
       }
+
+      Adw.SwitchRow disable_ha_validation_row {
+        title: _("Disable Validation");
+        subtitle: _("Disables checking if the server URL points to a valid Home Assistant server.");
+      }
     }
 
     Adw.PreferencesGroup {

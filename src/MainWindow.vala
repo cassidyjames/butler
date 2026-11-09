@@ -13,6 +13,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
         { "open_file", on_open_file_activate, "s" },
+        { "open_in_browser", on_open_in_browser_activate },
         { "zoom-out", zoom_out },
         { "zoom-default", zoom_default },
         { "zoom-in", zoom_in },
@@ -27,8 +28,8 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     [GtkChild] private unowned Gtk.Button home_button;
     [GtkChild] private unowned Adw.Toast fullscreen_toast;
     [GtkChild] private unowned Adw.ToastOverlay toast_overlay;
-    [GtkChild] private unowned Gtk.Button open_button;
     [GtkChild] private unowned Adw.Banner demo_banner;
+    [GtkChild] private unowned Adw.Banner external_banner;
     [GtkChild] private unowned Adw.Banner restart_banner;
     [GtkChild] private unowned Gtk.Stack stack;
     [GtkChild] private unowned Adw.StatusPage loading_page;
@@ -44,6 +45,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     private string? last_failed_uri = null;
     private int active_downloads = 0;
     private bool mouse_at_top = false;
+    private bool seen_home_assistant = false;
     private uint hide_timeout_id = 0;
 
     private const int DISTANCE_HEADER_REVEAL = 8;
@@ -326,6 +328,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             last_failed_uri = failing_uri;
             error_page.description = error.message;
             demo_banner.revealed = false;
+            external_banner.revealed = false;
             stack.visible_child_name = "error";
             return true;
         });
@@ -339,10 +342,6 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             if (last_failed_uri != null) {
                 web_view.load_uri (last_failed_uri);
             }
-        });
-
-        open_button.clicked.connect (() => {
-            new Gtk.UriLauncher (web_view.uri).launch.begin (this, null);
         });
 
         web_view.load_changed.connect (on_loading);
@@ -402,6 +401,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         if (last_failed_uri != null) {
             demo_banner.revealed = false;
+            external_banner.revealed = false;
             return;
         }
 
@@ -414,13 +414,20 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         if (current_url.has_prefix (default_server)) {
             demo_banner.revealed = true;
+            external_banner.revealed = false;
             return;
-        } else if (current_url.has_prefix (server)) {
-            demo_banner.revealed = false;
+        }
+
+        demo_banner.revealed = false;
+        external_banner.revealed = false;
+
+        bool on_server = is_on_server (current_url, server);
+        if (on_server) {
+            // Custom auth providers serve their own pages under /auth/
+            if (is_auth_path (current_url)) {
+                return;
+            }
         } else {
-            // Somehow you got away from the server without opening a link in
-            // the browser…
-            demo_banner.revealed = false;
             home_revealer.reveal_child = true;
         }
 
@@ -430,7 +437,12 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
             (obj, res) => {
                 try {
                     var js_result = web_view.evaluate_javascript.end (res);
-                    if (!js_result.to_boolean ()) {
+                    if (js_result.to_boolean ()) {
+                        seen_home_assistant = true;
+                    } else if (!on_server && seen_home_assistant) {
+                        // e.g. an OIDC provider's login page
+                        external_banner.revealed = true;
+                    } else {
                         stack.visible_child_name = "not-ha";
                     }
                 } catch (Error e) {
@@ -520,6 +532,12 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         web_view.reload ();
     }
 
+    private void on_open_in_browser_activate () {
+        if (web_view.uri != null) {
+            new Gtk.UriLauncher (web_view.uri).launch.begin (this, null);
+        }
+    }
+
     private void on_open_file_activate (SimpleAction action, Variant? parameter) {
         if (parameter != null) {
             new Gtk.FileLauncher (File.new_for_uri (parameter.get_string ())).launch.begin (this, null);
@@ -529,6 +547,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
     private void on_settings_activate () {
         var settings_dialog = new Butler.SettingsDialog ();
         settings_dialog.server_changed.connect (() => {
+            seen_home_assistant = false;
             web_view.load_uri (App.settings.get_string ("server"));
         });
         settings_dialog.colors_changed.connect (update_headerbar_colors);

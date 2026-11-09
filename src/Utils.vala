@@ -5,6 +5,27 @@
 
 namespace Butler {
 
+    public static bool is_on_server (string uri, string server) {
+        try {
+            var parsed_uri = Uri.parse (uri, UriFlags.SCHEME_NORMALIZE);
+            var parsed_server = Uri.parse (server, UriFlags.SCHEME_NORMALIZE);
+
+            return parsed_uri.get_scheme () == parsed_server.get_scheme () &&
+                (parsed_uri.get_host () ?? "").ascii_down () == (parsed_server.get_host () ?? "").ascii_down () &&
+                parsed_uri.get_port () == parsed_server.get_port ();
+        } catch (UriError e) {
+            return false;
+        }
+    }
+
+    public static bool is_auth_path (string uri) {
+        try {
+            return Uri.parse (uri, UriFlags.SCHEME_NORMALIZE).get_path ().has_prefix ("/auth/");
+        } catch (UriError e) {
+            return false;
+        }
+    }
+
     private static double contrast_ratio (Gdk.RGBA bg_color, Gdk.RGBA fg_color) {
         // From WCAG 2.0 https://www.w3.org/TR/WCAG20/#contrast-ratiodef
         var bg_luminance = get_luminance (bg_color);

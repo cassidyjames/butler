@@ -175,9 +175,10 @@ template $ButlerMainWindow : Adw.ApplicationWindow {
               spacing: 12;
               halign: center;
 
-              Gtk.Button open_button {
+              Gtk.Button {
                 label: _("_Open in Web Browser…");
                 use-underline: true;
+                action-name: "win.open_in_browser";
 
                 styles [
                   "pill",
@@ -205,6 +206,12 @@ template $ButlerMainWindow : Adw.ApplicationWindow {
       title: _("Browsing Home Assistant Demo");
       action-name: "win.settings";
       button-label: _("Change _Server…");
+    }
+
+    Adw.Banner external_banner {
+      title: _("Browsing an External Page");
+      action-name: "win.open_in_browser";
+      button-label: _("_Open in Browser");
     }
 
     Adw.Banner restart_banner {

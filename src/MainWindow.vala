@@ -120,7 +120,7 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
 
         string server = App.settings.get_string ("server");
         string current_url = App.settings.get_string ("current-url");
-        if (current_url != "") {
+        if (current_url != "" && is_on_server (current_url, server)) {
             web_view.load_uri (current_url);
         } else {
             web_view.load_uri (server);
@@ -315,8 +315,10 @@ public class Butler.MainWindow : Adw.ApplicationWindow {
         });
 
         close_request.connect (() => {
-            if (web_view.uri != null) {
+            if (web_view.uri != null && is_on_server (web_view.uri, App.settings.get_string ("server"))) {
                 App.settings.set_string ("current-url", web_view.uri);
+            } else {
+                App.settings.reset ("current-url");
             }
             save_window_state ();
             return Gdk.EVENT_PROPAGATE;

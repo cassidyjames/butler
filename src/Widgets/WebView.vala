@@ -30,7 +30,8 @@ public class Butler.WebView : WebKit.WebView {
             enable_html5_local_storage = true,
             enable_smooth_scrolling = true,
             enable_webgl = true,
-            enable_webrtc = true
+            enable_webrtc = true,
+            enable_write_console_messages_to_stdout = is_terminal
         };
 
         if (App.settings.get_boolean ("hardware-acceleration") == false) {

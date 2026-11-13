@@ -87,6 +87,16 @@
   </screenshots>
 
   <releases>
+    <release version="1.9.0" date="2026-11-12">
+      <description>
+        <p>Better support for external login pages</p>
+        <ul>
+          <li>Sign in through other identity providers, like with single sign-on (SSO) setups</li>
+          <li>A banner lets you know when you've navigated to a page outside of your Home Assistant server</li>
+          <li>More reliable restoring of your last view when re-opening Butler</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.8.3" date="2026-10-10">
       <description>
         <p>Work around WebKit regression with light/dark style switching</p>
